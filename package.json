@@ -27,7 +27,13 @@
     "@typescript-eslint/parser": "^4.15.2",
     "eslint": "^7.20.0",
     "eslint-config-google": "^0.14.0",
+    "husky": "^5.1.3",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm eslint && npm eslint:fix && git add ."
+    }
   }
 }
