@@ -3,7 +3,7 @@ import * as http from 'http';
 const host = 'localhost';
 const port = 8000;
 
-const requestListener = function (
+const requestListener = function(
 	request: http.IncomingMessage,
 	response: http.ServerResponse,
 ) {
