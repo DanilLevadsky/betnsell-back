@@ -7,9 +7,9 @@
     "build": "rimraf ./dist && tsc --build",
     "start": "npm run build && node ./dist/index.js",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
-    "eslint": "npx eslint './src/**'",
-    "eslint:fix": "npx eslint './src/**' --fix",
-    "prepare": "npx husky install"
+    "eslint": "npx eslint ./src/*",
+    "eslint:fix": "npx eslint ./src/* --fix",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -35,8 +35,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run eslint",
-      "pre-push": "npm run start"
+      "pre-commit": "npm run eslint:fix && git add ."
     }
   }
 }
