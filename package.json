@@ -9,7 +9,7 @@
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "eslint": "npx eslint './src/**'",
     "eslint:fix": "npx eslint './src/**' --fix",
-    "prepare": "husky install"
+    "prepare": "npx husky install"
   },
   "repository": {
     "type": "git",
