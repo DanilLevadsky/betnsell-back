@@ -35,12 +35,8 @@
   },
   "husky": {
     "hooks": {
-<<<<<<< HEAD
       "pre-commit": "npm run eslint",
       "pre-push": "npm run start"
-=======
-      "pre-commit": "npm run eslint:fix && git add ."
->>>>>>> parent of 3ca50d1... Changed README. Created constants holder in separate file. Changed npm eslint script to work with subfolders.
     }
   }
 }
