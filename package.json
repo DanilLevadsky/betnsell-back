@@ -7,8 +7,13 @@
     "build": "rimraf ./dist && tsc --build",
     "start": "npm run build && node ./dist/index.js",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+<<<<<<< HEAD
     "eslint": "npx eslint './src/**'",
     "eslint:fix": "npx eslint './src/**' --fix",
+=======
+    "eslint": "npx eslint ./src/*",
+    "eslint:fix": "npx eslint ./src/* --fix",
+>>>>>>> parent of 3ca50d1... Changed README. Created constants holder in separate file. Changed npm eslint script to work with subfolders.
     "prepare": "husky install"
   },
   "repository": {
@@ -35,8 +40,12 @@
   },
   "husky": {
     "hooks": {
+<<<<<<< HEAD
       "pre-commit": "npm run eslint",
       "pre-push": "npm run start"
+=======
+      "pre-commit": "npm run eslint:fix && git add ."
+>>>>>>> parent of 3ca50d1... Changed README. Created constants holder in separate file. Changed npm eslint script to work with subfolders.
     }
   }
 }
