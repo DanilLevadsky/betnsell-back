@@ -13,14 +13,14 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/DanilLevadsky/deutschen-soldaten-back.git"
+		"url": "git+https://github.com/DanilLevadsky/betnsell-back.git"
 	},
 	"author": "",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/DanilLevadsky/deutschen-soldaten-back/issues"
+		"url": "https://github.com/DanilLevadsky/betnsell-back/issues"
 	},
-	"homepage": "https://github.com/DanilLevadsky/deutschen-soldaten-back#readme",
+	"homepage": "https://github.com/DanilLevadsky/betnsell-back#readme",
 	"devDependencies": {
 		"@types/node": "^14.14.31",
 		"@types/typescript": "^2.0.0",
