@@ -1,7 +1,5 @@
-import * as http from 'http';
-
-const host = 'localhost';
-const port = 8000;
+import * as http from "http";
+import * as serverConstants from "./constants/serverConstants";
 
 const requestListener = function(
 	request: http.IncomingMessage,
@@ -12,6 +10,6 @@ const requestListener = function(
 };
 
 const server = http.createServer(requestListener);
-server.listen(port, host, () => {
-	console.log(`server is running on http://${host}:${port}`);
+server.listen(serverConstants.PORT, serverConstants.HOST, () => {
+	console.log(`server is running on http://${serverConstants.HOST}:${serverConstants.PORT}`);
 });
