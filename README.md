@@ -10,5 +10,9 @@ BetNSell - это первая украинская web платформа дл�
 - Создание и редактирование лота
 ### Схематическое отображение модульной архитектуры проекта
 <img src="/images/betnsell_architecture_diagram.svg">
-### Entity relation diagram базы данных
-<img src="/image/betnsell_database_diagram.svg">
+
+### ERD базы данных приложения
+<img src="/images/betnsell_database_diagram.svg">
+
+### ERD базы данных блэклиста
+<img src="/images/betnsell_blacklist-db.svg">
