@@ -9,5 +9,5 @@ BetNSell - это первая украинская web платформа дл�
 - Покупка билетов
 - Создание и редактирование лота
 ### Схематическое отображение модульной архитектуры проекта
-![Alt text](./images/betnsell_architecture_diagram.svg)
-<img src="./images/betnsell_architecture_diagram.svg">
+![Alt text](/images/betnsell_architecture_diagram.svg)
+<img src="/images/betnsell_architecture_diagram.svg">
