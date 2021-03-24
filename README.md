@@ -1,4 +1,10 @@
-Simple nodejs projec
-How to start:
-After cloning switch to project directory and use command "npm install"
-to get the devDepencies.
+# BetNSell
+## _Достойная азарт-платформа для продажи товаров_
+
+BetNSell - это первая украинская web платформа для покупки и продажи вещей путем розыгрыша.
+### Функционал
+- Двухфакторная регистрация и авторизация
+- Просмотр и редактирование профиля
+- Пополнение баланса
+- Покупка билетов
+- Создание и редактирование лота
