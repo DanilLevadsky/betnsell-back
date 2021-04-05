@@ -1,0 +1,24 @@
+{
+   "type": "postgres",
+   "host": "betnsell-db.ckn4r5hx1u4x.eu-central-1.rds.amazonaws.com",
+   "port": 5432,
+   "username": "master",
+   "password": "qwerty123",
+   "database": "postgres",
+   "synchronize": true,
+   "logging": false,
+   "entities": [
+      "src/db/models/**/*.ts"
+   ],
+   "migrations": [
+      "src/db/migration/**/*.ts"
+   ],
+   "subscribers": [
+      "src/db/subscriber/**/*.ts"
+   ],
+   "cli": {
+      "entitiesDir": "src/db/models",
+      "migrationsDir": "src/db/migration",
+      "subscribersDir": "src/db/subscriber"
+   }
+}

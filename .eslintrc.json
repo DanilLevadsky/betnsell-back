@@ -20,6 +20,11 @@
         "indent": ["error", "tab"],
         "curly": ["error", "all"],
         "no-unused-vars": "warn",
-        "no-tabs": "off"
+        "no-tabs": "off",
+        "object-curly-spacing": "off",
+        "new-cap": "off",
+        "no-trailing-spaces": "off",
+        "require-jsdoc": "off",
+        "padded-blocks": "off"
     }
 }
