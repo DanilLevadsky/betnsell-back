@@ -1,15 +1,9 @@
-import * as http from "http";
-import * as serverConstants from "./constants/serverConstants";
+import fastify from "fastify";
 
-const requestListener = function(
-	request: http.IncomingMessage,
-	response: http.ServerResponse,
-) {
-	response.writeHead(200);
-	response.end("first server");
-};
+const app = fastify({ logger: true });
 
-const server = http.createServer(requestListener);
-server.listen(serverConstants.PORT, serverConstants.HOST, () => {
-	console.log(`server is running on http://${serverConstants.HOST}:${serverConstants.PORT}`);
+app.get("/", (request, response) => {
+	response.send({"rabotaet?": "da"});
 });
+
+app.listen(3000).catch(console.error);
