@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, ManyToMany} from "typeorm";
 import { Length, IsEmail, IsMobilePhone, Min, MaxLength } from "class-validator";
+import { Auction } from "./Auction";
 
 @Entity()
 export class User {
@@ -33,5 +34,8 @@ export class User {
 
 	@Column()
 	profilePic: string;
+
+	@ManyToMany(type => Auction, auction => auction.id)
+	auction: Auction[]
 
 }
