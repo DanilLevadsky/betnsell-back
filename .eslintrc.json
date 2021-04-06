@@ -25,6 +25,7 @@
         "new-cap": "off",
         "no-trailing-spaces": "off",
         "require-jsdoc": "off",
-        "padded-blocks": "off"
+        "padded-blocks": "off",
+        "max-len": [1, 82, 2]
     }
 }
