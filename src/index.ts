@@ -1,9 +1,4 @@
-import fastify from "fastify";
+import { server } from "./server";
+import db from "./db";
 
-const app = fastify({ logger: true });
-
-app.get("/", (request, response) => {
-	response.send({"rabotaet?": "da"});
-});
-
-app.listen(3000).catch(console.error);
+server.listen(3000).catch(console.error);
