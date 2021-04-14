@@ -1,10 +1,8 @@
 import fastify from "fastify";
-import fastifyJWT from "fastify-jwt";
-import crypto from "crypto";
+import { routes } from "./services/auth/auth";
 
 const server = fastify({ logger: true });
-server.register(fastifyJWT, {
-	secret: crypto.randomBytes(32).toString("base64"),
-});
+
+server.register(routes, { prefix: "/auth" });
 
 export { server };
