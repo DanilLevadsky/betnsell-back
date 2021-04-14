@@ -10,7 +10,7 @@ import {
 
 dotenv.config();
 
-const routes: FastifyPluginCallback = async function(fastify: FastifyInstance): Promise<any> {
+const auth: FastifyPluginCallback = async function(fastify: FastifyInstance): Promise<any> {
 
 	fastify.post("/login", { schema: loginPost }, async (req: any, res: any) => {
 		let user;
@@ -30,13 +30,16 @@ const routes: FastifyPluginCallback = async function(fastify: FastifyInstance): 
 		if (!isCorrect) {
 			return res.status(400);
 		}
-		const accessToken = await jwt.sign(user, <string>process.env.ACCESS_TOKEN_SECRET, { expiresIn: 86400 });
+		const accessToken = await jwt.sign(user, <string>process.env.ACCESS_TOKEN_SECRET, { expiresIn: 21600 });
 		return res.status(200).send({ jwt: accessToken });
 	});
 
 	fastify.get("/login", { schema: loginGet }, async (req: any, res: any) => {
 		const token = req.headers.authorization.split(" ")[1];
 		const data = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
+		if (!data) {
+			return res.status(401);
+		}
 		return res.status(200).send(data);
 	});
 
@@ -51,7 +54,8 @@ const routes: FastifyPluginCallback = async function(fastify: FastifyInstance): 
 			password: hashSync(req.body.password, 10),
 		};
 		users.push(newUser);
-		return res.status(200).send(newUser);
+		const accessToken = await jwt.sign(newUser, <string>process.env.ACCESS_TOKEN_SECRET, { expiresIn: 21600 });
+		return res.status(200).send({jwt: accessToken});
 	});
 
 };
@@ -65,4 +69,4 @@ const getUserByEmail = function(email: string) {
 };
 
 
-export { routes };
+export { auth };

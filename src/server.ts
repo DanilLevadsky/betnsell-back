@@ -1,8 +1,8 @@
 import fastify from "fastify";
-import { routes } from "./services/auth/auth";
+import { auth } from "./services/auth/auth";
 
 const server = fastify({ logger: true });
 
-server.register(routes, { prefix: "/auth" });
+server.register(auth, { prefix: "/auth" });
 
 export { server };
