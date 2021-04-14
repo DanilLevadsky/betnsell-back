@@ -1,8 +1,7 @@
 import * as dotenv from "dotenv";
-import { users } from "../../constants/config";
 import { loginPost, loginGet, signUpPost } from "./schema";
 import jwt from "jsonwebtoken";
-import {compareSync, hashSync} from "bcryptjs";
+import { compareSync } from "bcryptjs";
 import {
 	FastifyInstance,
 	FastifyPluginCallback,
@@ -64,14 +63,5 @@ const auth: FastifyPluginCallback = async function(fastify: FastifyInstance): Pr
 	});
 
 };
-
-// const getUserByUsername = function(username: string) {
-// 	return users.find(x => x.username === username);
-// };
-//
-// const getUserByEmail = function(email: string) {
-// 	return users.find(x => x.email === email);
-// };
-
 
 export { auth };
