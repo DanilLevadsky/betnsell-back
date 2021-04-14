@@ -7,6 +7,8 @@ import {
 	FastifyInstance,
 	FastifyPluginCallback,
 } from "fastify";
+import { ifUserExists, getUserByUsername, getUserByEmail, createUser } from "../users/users";
+
 
 dotenv.config();
 
@@ -18,17 +20,17 @@ const auth: FastifyPluginCallback = async function(fastify: FastifyInstance): Pr
 			return res.status(400);
 		}
 		if (req.body.username) {
-			user = getUserByUsername(req.body.username);
+			user = await getUserByUsername(req.body.username);
 		}
 		if (req.body.email) {
-			user = getUserByEmail(req.body.email);
+			user = await getUserByEmail(req.body.email);
 		}
 		if (!user) {
 			return res.status(400);
 		}
-		const isCorrect = compareSync(req.body.password, user.password);
+		const isCorrect = await compareSync(req.body.password, user.password);
 		if (!isCorrect) {
-			return res.status(400);
+			return res.status(400).send("incorrect username or password");
 		}
 		const accessToken = await jwt.sign(user, <string>process.env.ACCESS_TOKEN_SECRET, { expiresIn: 21600 });
 		return res.status(200).send({ jwt: accessToken });
@@ -44,29 +46,32 @@ const auth: FastifyPluginCallback = async function(fastify: FastifyInstance): Pr
 	});
 
 	fastify.post("/register", { schema: signUpPost }, async (req:any, res:any) => {
-		const user = users.find(x => (x.username === req.body.username) || (x.email === req.body.email));
+		const user = await ifUserExists(req.body.email, req.body.username);
 		if (user) {
 			return res.status(400).send("User already exists");
 		}
-		const newUser = {
+		const data = {
 			username: req.body.username,
 			email: req.body.email,
-			password: hashSync(req.body.password, 10),
+			password: req.body.password,
+			profilePic: req.body.profilePic || null,
+			mobileNum: req.body.mobile,
+			name: req.body.name || null,
 		};
-		users.push(newUser);
-		const accessToken = await jwt.sign(newUser, <string>process.env.ACCESS_TOKEN_SECRET, { expiresIn: 21600 });
+		await createUser(data);
+		const accessToken = await jwt.sign(data, <string>process.env.ACCESS_TOKEN_SECRET, { expiresIn: 21600 });
 		return res.status(200).send({jwt: accessToken});
 	});
 
 };
 
-const getUserByUsername = function(username: string) {
-	return users.find(x => x.username === username);
-};
-
-const getUserByEmail = function(email: string) {
-	return users.find(x => x.email === email);
-};
+// const getUserByUsername = function(username: string) {
+// 	return users.find(x => x.username === username);
+// };
+//
+// const getUserByEmail = function(email: string) {
+// 	return users.find(x => x.email === email);
+// };
 
 
 export { auth };

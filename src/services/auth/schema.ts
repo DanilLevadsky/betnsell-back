@@ -61,13 +61,8 @@ const signUpPost: FastifySchema = {
 		},
 	},
 	"response": {
-		"2xx": {
-			"username": {
-				"type": "string",
-			},
-			"email": {
-				"type": "string",
-			},
+		200: {
+			"jwt": { "type": "string" },
 		},
 	},
 };

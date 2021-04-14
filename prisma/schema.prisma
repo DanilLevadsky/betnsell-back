@@ -9,11 +9,11 @@ generator client {
 
 model User {
   id         Int        @id @default(autoincrement())
-  username   String
-  mail       String     @unique
+  username   String     @unique
+  email      String     @unique
   password   String
   profilePic String?    @map("profile_pic")
-  mobileNum  String     @unique @map("mobile_number")
+  mobile     String?    @unique @map("mobile_number")
   balance    Int        @default(0)
   name       String?
   // customer <- user one-to-many relation
