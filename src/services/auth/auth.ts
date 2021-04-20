@@ -6,7 +6,7 @@ import {
 	FastifyInstance,
 	FastifyPluginCallback,
 } from "fastify";
-import { ifUserExists, getUserByUsername, getUserByEmail, createUser } from "../users/users";
+import { ifUserExists, getUserByUsername, getUserByEmail, createUser } from "../users/queries";
 
 
 dotenv.config();
@@ -16,7 +16,7 @@ const auth: FastifyPluginCallback = async function(fastify: FastifyInstance): Pr
 	fastify.post("/login", { schema: loginPost }, async (req: any, res: any) => {
 		let user;
 		if (req.body.email && req.body.username) {
-			return res.status(400);
+			return res.status(400).send({ error: res.error.message });
 		}
 		if (req.body.username) {
 			user = await getUserByUsername(req.body.username);
@@ -25,11 +25,11 @@ const auth: FastifyPluginCallback = async function(fastify: FastifyInstance): Pr
 			user = await getUserByEmail(req.body.email);
 		}
 		if (!user) {
-			return res.status(400);
+			return res.status(400).send({ error: res.error.message });
 		}
 		const isCorrect = await compareSync(req.body.password, user.password);
 		if (!isCorrect) {
-			return res.status(400).send("incorrect username or password");
+			return res.status(400).send({ error: res.error.message });
 		}
 		const accessToken = await jwt.sign(user, <string>process.env.ACCESS_TOKEN_SECRET, { expiresIn: 21600 });
 		return res.status(200).send({ jwt: accessToken });
@@ -39,13 +39,13 @@ const auth: FastifyPluginCallback = async function(fastify: FastifyInstance): Pr
 		const token = req.headers.authorization.split(" ")[1];
 		const data = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
 		if (!data) {
-			return res.status(401);
+			return res.status(401).send({ error: res.error.message });
 		}
 		return res.status(200).send(data);
 	});
 
-	fastify.post("/register", { schema: signUpPost }, async (req:any, res:any) => {
-		const user = await ifUserExists(req.body.email, req.body.username);
+	fastify.put("/register", { schema: signUpPost }, async (req:any, res:any) => {
+		let user = await ifUserExists(req.body.email, req.body.username);
 		if (user) {
 			return res.status(400).send("User already exists");
 		}
@@ -57,9 +57,11 @@ const auth: FastifyPluginCallback = async function(fastify: FastifyInstance): Pr
 			mobileNum: req.body.mobile,
 			name: req.body.name || null,
 		};
-		await createUser(data);
-		const accessToken = await jwt.sign(data, <string>process.env.ACCESS_TOKEN_SECRET, { expiresIn: 21600 });
-		return res.status(200).send({jwt: accessToken});
+		user = await createUser(data);
+		if (user) {
+			const accessToken = await jwt.sign(user as object, <string>process.env.ACCESS_TOKEN_SECRET, {expiresIn: 21600});
+			return res.status(201).send({jwt: accessToken});
+		}
 	});
 
 };

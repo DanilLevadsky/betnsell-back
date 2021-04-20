@@ -41,7 +41,6 @@ model Auction {
   id            Int        @id @default(autoincrement())
   createdAt     DateTime   @default(now()) @map("created_at")
   status        Status     @default(STARTED)
-  // When auction status was changed.
   updatedAt     DateTime   @updatedAt @map("updated_at")
   lotFinishDate DateTime   @map("lot_finish_date")
   lotExpireDate DateTime   @map("lot_expire_date")
