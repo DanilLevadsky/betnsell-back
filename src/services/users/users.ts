@@ -1,40 +1,46 @@
-import { PrismaClient } from "@prisma/client";
-import { hashSync } from "bcryptjs";
+import { getUserById, updateUser, deleteUser } from "./queries";
+import {
+	FastifyInstance,
+	FastifyPluginCallback,
+} from "fastify";
+import { getUserSchema, updateUserSchema, deleteUserSchema } from "./schema";
 
-const prisma = new PrismaClient();
+const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
+	fastify.get("/:id", { schema: getUserSchema }, async (req: any, res: any ) => {
+		const user = await getUserById(parseInt(req.params.id));
+		if (!user) {
+			return res.status(400).send({
+				statusCode: res.statusCode,
+				error: res.error,
+				message: "User not found",
+			});
+		}
+		return res.status(200).send(user);
+	});
 
-const createUser = async function(data: any): Promise<any> {
-	await prisma.user.create({
-		data: {
-			username: data.username,
-			email: data.email,
-			password: hashSync(data.password, 10),
-			profilePic: data.profilePic || null,
-			mobileNum: data.mobile,
-			name: data.name || null,
-		},
+	fastify.patch("/update/:id", { schema: updateUserSchema }, async (req: any, res: any) => {
+		const updatedUser = await updateUser(parseInt(req.params.id), req.body.data);
+		if (!updatedUser) {
+			return res.status(400).send({
+				statusCode: res.statusCode,
+				error: res.error,
+				message: "Cannot update user info",
+			});
+		}
+		return res.status(200).send(updatedUser);
+	});
+
+	fastify.delete("/delete/:id", { schema: deleteUserSchema }, async (req: any, res: any) => {
+		const deletedUser = await deleteUser(parseInt(req.params.id));
+		if (!deletedUser) {
+			return res.status(400).send({
+				statusCode: res.statusCode,
+				error: res.error,
+				message: "Cannot delete user",
+			});
+		}
+		return res.status(200).send(deletedUser);
 	});
 };
 
-const getUserByUsername = async function(username: string) {
-	return await prisma.user.findUnique(
-		{ where: {
-			username: username,
-		},
-		});
-};
-
-const getUserByEmail = async function(email: string) {
-	return await prisma.user.findUnique(
-		{ where: {
-			email: email,
-		},
-		});
-};
-
-const ifUserExists = async function(email: string, username: string) {
-	return await getUserByEmail(email) || await getUserByUsername(username);
-};
-
-
-export { getUserByEmail, getUserByUsername, ifUserExists, createUser };
+export { users };
