@@ -9,4 +9,5 @@ server.register(auth, { prefix: "/auth" });
 server.register(users, { prefix: "/users" });
 server.register(products, { prefix: "/products" });
 
+
 export { server };

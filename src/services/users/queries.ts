@@ -6,16 +6,13 @@ const prisma = new PrismaClient();
 config();
 
 const createUser = async function(data: any): Promise<any> {
+
 	const user = await prisma.user.create({
 		data: {
 			username: data.username,
 			email: data.email,
 			password: hashSync(data.password, 10),
-			profilePic: data.profilePic || null,
-			mobile: data.mobile,
-			name: data.name || null,
-		},
-	});
+		}});
 	if (user) {
 		const data: any = {};
 		Object.entries(user).forEach((arr) => {
@@ -83,6 +80,7 @@ const updateUser = async function(id: number, data: any) {
 
 const deleteUser = async function(id: number) {
 	const user = await getUserById(id);
+
 	if (user) {
 		return await prisma.user.delete({
 			where: {
@@ -91,6 +89,7 @@ const deleteUser = async function(id: number) {
 		});
 	}
 	return null;
+
 };
 
 export {
