@@ -19,7 +19,7 @@
         "quotes": ["error", "double"],
         "indent": ["error", "tab"],
         "curly": ["error", "all"],
-        "no-unused-vars": "warn",
+        "no-unused-vars": "off",
         "no-tabs": "off",
         "object-curly-spacing": "off",
         "new-cap": "off",
