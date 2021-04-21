@@ -1,4 +1,4 @@
-import {FastifySchema} from "fastify";
+import { FastifySchema } from "fastify";
 
 const loginPost: FastifySchema = {
 	"body": {
@@ -23,8 +23,9 @@ const loginPost: FastifySchema = {
 		200: {
 			"type": "object",
 			"properties": {
-				"username": { "type": "string" },
+				"userId": {"type": "number" },
 				"jwt": { "type": "string" },
+				"expiresIn": { "type": "number" },
 			},
 		},
 	},

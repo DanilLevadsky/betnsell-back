@@ -80,7 +80,6 @@ const updateUser = async function(id: number, data: any) {
 
 const deleteUser = async function(id: number) {
 	const user = await getUserById(id);
-
 	if (user) {
 		return await prisma.user.delete({
 			where: {
