@@ -6,4 +6,6 @@ export const enum ErrorTypes {
 	unauthorizedError,
 	invalidAuthTokenError,
 	invalidUpdateInfoError,
-};
+	forbiddenAccessError,
+	invalidProductDataError
+}

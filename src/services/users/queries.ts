@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { hashSync } from "bcryptjs";
 import { config } from "dotenv";
+import {deleteProductsByUser} from "../products/queries";
 const prisma = new PrismaClient();
 
 config();
@@ -81,6 +82,7 @@ const updateUser = async function(id: number, data: any) {
 const deleteUser = async function(id: number) {
 	const user = await getUserById(id);
 	if (user) {
+		await deleteProductsByUser(user.id);
 		return await prisma.user.delete({
 			where: {
 				id: user.id,
@@ -88,7 +90,6 @@ const deleteUser = async function(id: number) {
 		});
 	}
 	return null;
-
 };
 
 export {

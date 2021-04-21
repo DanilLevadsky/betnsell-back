@@ -22,13 +22,7 @@ const updateUserSchema: FastifySchema = {
 	},
 };
 
-const deleteUserSchema: FastifySchema = {
-	"response": {
-		"id": { "type": "number" },
-		"username": { "type": "string" },
-		"email": { "type": "string" },
-	},
-};
 
-export { getUserSchema, updateUserSchema, deleteUserSchema };
+export { getUserSchema, updateUserSchema };
 
+// TODO: update all schemas

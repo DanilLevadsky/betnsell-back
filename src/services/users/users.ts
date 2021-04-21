@@ -1,9 +1,10 @@
 import { deleteUser, getUserById, updateUser } from "./queries";
 import { FastifyInstance, FastifyPluginCallback } from "fastify";
-import { deleteUserSchema, getUserSchema, updateUserSchema } from "./schema";
+import { getUserSchema, updateUserSchema } from "./schema";
 import { RequestError } from "../../utils/error";
 import { ErrorTypes } from "../../constants/errorConstants";
 import jwt from "jsonwebtoken";
+import { deleteProductsByUser } from "../products/queries";
 
 
 const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
@@ -27,7 +28,7 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 		return res.status(200).send(updatedUser);
 	});
 
-	fastify.delete("/delete", { schema: deleteUserSchema }, async (req: any, res: any) => {
+	fastify.delete("/delete", async (req: any, res: any) => {
 		const token = req.headers.authorization.split(" ")[1];
 		const data = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
 		if (!data) {
@@ -35,6 +36,8 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 				new RequestError(401, ErrorTypes.unauthorizedError, "Unauthorized"),
 			);
 		}
+		const id = (data as any).id;
+		await deleteProductsByUser(id);
 		const deletedUser = await deleteUser(parseInt((data as any).id));
 		if (!deletedUser) {
 			return res.status(400).send(
