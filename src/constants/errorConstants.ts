@@ -7,5 +7,5 @@ export const enum ErrorTypes {
 	invalidAuthTokenError = "invalidAuthTokenError",
 	invalidUpdateInfoError = "invalidUpdateInfoError",
 	forbiddenAccessError = "forbiddenAccessError",
-	invalidProductDataError = "invalidProductDataError"
+	invalidProductDataError = "invalidProductDataError",
 }
