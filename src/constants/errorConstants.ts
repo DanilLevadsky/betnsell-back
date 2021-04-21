@@ -1,11 +1,11 @@
 export const enum ErrorTypes {
-	userAlreadyExistsError,
-	wrongPasswordOrLoginError,
-	userNotFoundError,
-	productNotFoundError,
-	unauthorizedError,
-	invalidAuthTokenError,
-	invalidUpdateInfoError,
-	forbiddenAccessError,
-	invalidProductDataError
+	userAlreadyExistsError = "userAlreadyExistsError",
+	wrongPasswordOrLoginError = "wrongPasswordOrLoginError",
+	userNotFoundError = "userNotFoundError",
+	productNotFoundError = "productNotFoundError",
+	unauthorizedError = "unauthorizedError",
+	invalidAuthTokenError = "invalidAuthTokenError",
+	invalidUpdateInfoError = "invalidUpdateInfoError",
+	forbiddenAccessError = "forbiddenAccessError",
+	invalidProductDataError = "invalidProductDataError"
 }

@@ -13,11 +13,11 @@ import {ErrorTypes} from "../../constants/errorConstants";
 import jwt from "jsonwebtoken";
 
 const products: FastifyPluginCallback = async function(fastify: FastifyInstance) {
-	fastify.put("/", { schema: postProductSchema }, async (req: any, res: any) => {
+	fastify.put("/create", { schema: postProductSchema }, async (req: any, res: any) => {
 		const product = await createProduct(req.body.data);
 		if (!product) {
 			return res.status(400).send(
-				new RequestError(400, ErrorTypes.invalidProductDataError, "cannot create product with such data"),
+				new RequestError(400, ErrorTypes.invalidProductDataError, "Cannot create product with such data"),
 			);
 		}
 		return res.status(201).send(product);
