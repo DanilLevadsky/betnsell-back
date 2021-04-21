@@ -35,7 +35,9 @@ const auth: FastifyPluginCallback = async function(fastify: FastifyInstance): Pr
 		return res.status(200).send({ jwt: accessToken });
 	});
 
-	fastify.get("/login", { schema: loginGet }, async (req: any, res: any) => {
+
+
+	fastify.get("/user", { schema: loginGet }, async (req: any, res: any) => {
 		const token = req.headers.authorization.split(" ")[1];
 		const data = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
 		if (!data) {
