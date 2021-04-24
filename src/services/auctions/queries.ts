@@ -26,6 +26,28 @@ const getAuctionByProductId = async function (productId: number) {
 	});
 };
 
+const getPagesCount = async function(perPage: number) {
+	const length = await prisma.auction.count();
+	const pages = length / perPage;
+	if (Math.floor(pages) === pages) {
+		return pages;
+	} else {
+		return Math.floor(pages) + 1;
+	}
+};
+
+const getAuctionByPage = async function (perPage: number, page: number) {
+	return await prisma.auction.findMany({
+		orderBy: {
+			id: "asc",
+		},
+		skip: perPage*(page-1),
+		take: perPage,
+	});
+	// }
+};
+
+
 const getAuctionsByUser = async function (userId: number) {
 	return await prisma.auction.findMany({
 		where: {
@@ -47,4 +69,6 @@ export {
 	getAuctionById,
 	getAuctionByProductId,
 	getAuctionsByUser,
+	getPagesCount,
+	getAuctionByPage,
 };

@@ -58,7 +58,7 @@ const getUserById = async function(id: number) {
 
 	return user;
 };
-
+// TODO: password hashing
 const updateUser = async function(id: number, data: any) {
 	const user = await getUserById(id);
 	let updatedUser;

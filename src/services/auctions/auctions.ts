@@ -2,12 +2,13 @@ import {FastifyInstance, FastifyPluginCallback} from "fastify";
 
 import {
 	createAuction,
-	getAuctionById,
+	getAuctionById, getAuctionByPage,
 	getAuctionByProductId,
-	getAuctionsByUser,
+	getAuctionsByUser, getPagesCount,
 } from "./queries";
 import {RequestError} from "../../utils/error";
 import {ErrorTypes} from "../../constants/errorConstants";
+import {queryStringSchema} from "./schema";
 // Todo: create schemas and import it.
 
 const auctions: FastifyPluginCallback = async function (
@@ -51,6 +52,23 @@ const auctions: FastifyPluginCallback = async function (
 			);
 		}
 		return res.status(200).send(auction);
+	});
+
+	fastify.get("/pages/:perPage", async (req:any, res:any) => {
+		const pages = getPagesCount(parseInt(req.params.perPage));
+		return res.status(200).send({pages: pages});
+	});
+
+
+	fastify.get("/pages", { schema: queryStringSchema }, async (req: any, res: any) => {
+		console.log(req.query);
+		const perPage = parseInt(req.query.perPage);
+		const page = parseInt(req.query.page);
+		const auctions = await getAuctionByPage(perPage, page);
+		if (!auctions) {
+			new RequestError(400, ErrorTypes.auctionNotFoundError, "Auctions not found");
+		}
+		return res.status(200).send({auctions});
 	});
 };
 
