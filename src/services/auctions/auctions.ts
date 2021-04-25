@@ -61,7 +61,6 @@ const auctions: FastifyPluginCallback = async function (
 
 
 	fastify.get("/pages", { schema: queryStringSchema }, async (req: any, res: any) => {
-		console.log(req.query);
 		const perPage = parseInt(req.query.perPage);
 		const page = parseInt(req.query.page);
 		const auctions = await getAuctionByPage(perPage, page);
