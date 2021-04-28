@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-import {loginGet, loginPost, signUpPost} from "./schema";
+import {loginByUsername, loginByEmail, loginGet, signUpPost} from "./schema";
 import jwt from "jsonwebtoken";
 import {compareSync} from "bcryptjs";
 import {FastifyInstance, FastifyPluginCallback} from "fastify";
@@ -17,7 +17,7 @@ dotenv.config();
 
 const auth: FastifyPluginCallback = async function(fastify: FastifyInstance): Promise<any> {
 
-	fastify.post("/login/email", { schema: loginPost }, async (req: any, res: any) => {
+	fastify.post("/login/email", { schema: loginByEmail }, async (req: any, res: any) => {
 		const user = await getUserByEmail(req.body.email);
 		if (!user) {
 			return res.status(400).send(
@@ -35,7 +35,7 @@ const auth: FastifyPluginCallback = async function(fastify: FastifyInstance): Pr
 
 	});
 
-	fastify.post("/login/username", { schema: loginPost }, async (req: any, res: any) => {
+	fastify.post("/login/username", { schema: loginByUsername }, async (req: any, res: any) => {
 		const user = await getUserByUsername(req.body.username);
 		if (!user) {
 			return res.status(400).send(
@@ -81,7 +81,7 @@ const auth: FastifyPluginCallback = async function(fastify: FastifyInstance): Pr
 		user = await createUser(data);
 		if (user) {
 			const accessToken = await jwt.sign(user as object, <string>process.env.ACCESS_TOKEN_SECRET, {expiresIn: 21600});
-			return res.status(201).send({jwt: accessToken});
+			return res.status(201).send({jwt: accessToken, userId: user.id, expiresIn: Date.now() + 21600000});
 		}
 	});
 

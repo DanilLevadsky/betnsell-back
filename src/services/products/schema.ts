@@ -1,27 +1,27 @@
 import { FastifySchema } from "fastify";
 
 const postProductSchema: FastifySchema = {
-	"body": {
-		"data": {
-			"type": "object",
-			"required": ["title", "userId", "price"],
-			"properties": {
-				"title": {
-					"type": "string",
-					"minLength": 5,
+	body: {
+		data: {
+			type: "object",
+			required: ["title", "userId", "price", "description", "photo"],
+			properties: {
+				title: {
+					type: "string",
+					minLength: 5,
 				},
-				"price": {
-					"type": "number",
-					"min": 5,
+				price: {
+					type: "number",
+					min: 5,
 				},
-				"userId": {
-					"type": "number",
+				userId: {
+					type: "number",
 				},
-				"description": {
-					"type": "string",
+				description: {
+					type: ["string", "null"],
 				},
-				"photo": {
-					"type": "string",
+				photo: {
+					type: ["string", "null"],
 				},
 			},
 		},

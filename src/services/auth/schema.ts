@@ -1,72 +1,104 @@
 import { FastifySchema } from "fastify";
 
-const loginPost: FastifySchema = {
-	"body": {
-		"type": "object",
-		"required": ["password"],
-		"properties": {
-			"password": {
-				"type": "string",
-				"minLength": 8,
+const loginByEmail: FastifySchema = {
+	body: {
+		type: "object",
+		required: ["email", "password"],
+		properties: {
+			password: {
+				type: "string",
 			},
-			"username": {
-				"type": ["string", "null"],
-				"minLength": 5,
-			},
-			"email": {
-				"type": ["string", "null"],
-				"minLength": 8,
+			email: {
+				type: "string",
 			},
 		},
 	},
-	"response": {
-		200: {
-			"type": "object",
-			"properties": {
-				"userId": {"type": "number" },
-				"jwt": { "type": "string" },
-				"expiresIn": { "type": "number" },
+	response: {
+		"2xx": {
+			type: "object",
+			properties: {
+				userId: { type: "number" },
+				jwt: { type: "string" },
+				expiresIn: { type: "number" },
+			},
+		},
+	},
+};
+
+const loginByUsername: FastifySchema = {
+	body: {
+		type: "object",
+		required: ["username", "password"],
+		properties: {
+			password: {
+				type: "string",
+			},
+			username: {
+				type: "string",
+			},
+		},
+	},
+	response: {
+		"2xx": {
+			type: "object",
+			properties: {
+				userId: { type: "number" },
+				jwt: { type: "string" },
+				expiresIn: { type: "number" },
 			},
 		},
 	},
 };
 
 const loginGet: FastifySchema = {
-	"response": {
-		"username": {
-			"type": "string",
-		},
-		"email": {
-			"type": "string",
+	response: {
+		"2xx": {
+			id: { type: "number" },
+			username: { type: "string" },
+			email: { type: "string" },
+			mobile: { type: ["string", "null"] },
+			profilePic: { type: ["string", "null"] },
+			balance: { type: ["number", "null"] },
+			name: { type: ["string", "null"] },
+			iat: { type: "number" },
+			exp: { type: "number" },
 		},
 	},
 };
 
 const signUpPost: FastifySchema = {
-	"body": {
-		"type": "object",
-		"required": ["username", "password", "email"],
-		"properties": {
-			"password": {
-				"type": "string",
-				"minLength": 8,
+	body: {
+		type: "object",
+		required: ["username", "password", "email", "mobile", "name", "profilePic"],
+		properties: {
+			password: {
+				type: "string",
+				minLength: 8,
 			},
-			"username": {
-				"type": ["string", "null"],
-				"minLength": 5,
+			username: {
+				type: "string",
+				minLength: 5,
 			},
-			"email": {
-				"type": ["string", "null"],
-				"minLength": 8,
+			email: {
+				type: "string",
+				minLength: 8,
 			},
+			mobile: { type: ["string", "null"] },
+			name: { type: ["string", "null"] },
+			profilePic: { type: ["string", "null"] },
 		},
 	},
-	"response": {
-		200: {
-			"jwt": { "type": "string" },
+	response: {
+		"2xx": {
+			type: "object",
+			properties: {
+				jwt: { type: "string" },
+				userId: { type: "number" },
+				expiresIn: { type: "number" },
+			},
 		},
 	},
 };
 
 
-export { loginPost, loginGet, signUpPost };
+export { loginGet, signUpPost, loginByEmail, loginByUsername };

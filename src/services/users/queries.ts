@@ -58,26 +58,87 @@ const getUserById = async function(id: number) {
 
 	return user;
 };
-// TODO: password hashing
-const updateUser = async function(id: number, data: any) {
-	const user = await getUserById(id);
-	let updatedUser;
-	if (user) {
-		updatedUser = await prisma.user.update({
-			where: {
-				id: user.id,
-			},
-			data: {
-				...data,
-			},
-		}).catch((err) => {
-			return { message: err.message };
-		});
-	}
 
-	return updatedUser;
+const updateUsername = async function (id: number, username: string) {
+	return await prisma.user.update({
+		data: {
+			username: username,
+		},
+		where: {
+			id: id,
+		},
+	});
 };
 
+const updateEmail = async function (id: number, email: string) {
+	return await prisma.user.update({
+		data: {
+			email: email,
+		},
+		where: {
+			id: id,
+		},
+	});
+};
+
+const updatePassword = async function (id: number, password: string) {
+	return await prisma.user.update({
+		data: {
+			password: hashSync(password, 10),
+		},
+		where: {
+			id: id,
+		},
+	});
+};
+
+const updateName = async function (id: number, name: string) {
+	return await prisma.user.update({
+		data: {
+			name: name,
+		},
+		where: {
+			id: id,
+		},
+	});
+};
+
+const updateMobile = async function (id: number, mobile: string) {
+	return await prisma.user.update({
+		data: {
+			mobile: mobile,
+		},
+		where: {
+			id: id,
+		},
+	});
+};
+
+const updateProfilePic = async function (id: number, profilePic: string) {
+	return await prisma.user.update({
+		data: {
+			mobile: profilePic,
+		},
+		where: {
+			id: id,
+		},
+	});
+};
+
+const addFunds = async function (id: number, sum: number) {
+	const user = await getUserById(id);
+	if (user) {
+		return await prisma.user.update({
+			data: {
+				balance: user.balance + sum,
+			},
+			where: {
+				id: id,
+			},
+		});
+	}
+	return null;
+};
 
 const deleteUser = async function(id: number) {
 	const user = await getUserById(id);
@@ -98,6 +159,12 @@ export {
 	ifUserExists,
 	createUser,
 	getUserById,
-	updateUser,
 	deleteUser,
+	updateUsername,
+	updateEmail,
+	updateMobile,
+	updateName,
+	updatePassword,
+	updateProfilePic,
+	addFunds,
 };

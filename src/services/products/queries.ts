@@ -18,8 +18,10 @@ const getProductById = async function(id: number) {
 	});
 };
 
-const getProductByUser = async function(userId: number) {
+const getProductsByUser = async function(userId: number, perPage: number, page: number) {
 	return await prisma.product.findMany({
+		take: perPage,
+		skip: perPage*(page-1),
 		where: {
 			userId: userId,
 		},
@@ -28,6 +30,20 @@ const getProductByUser = async function(userId: number) {
 
 const getAllProducts = async function() {
 	return await prisma.product.findMany({});
+};
+
+const getProductPagesCount = async function(perPage: number, userId: number) {
+	const length = await prisma.product.count({
+		where: {
+			userId: userId,
+		},
+	});
+	const pages = length / perPage;
+	if (Math.floor(pages) === pages) {
+		return pages;
+	} else {
+		return Math.floor(pages) + 1;
+	}
 };
 
 const updateProduct = async function(id: number, data: any) {
@@ -71,9 +87,10 @@ const deleteProductsByUser = async function(userId: number) {
 export {
 	createProduct,
 	getProductById,
-	getProductByUser,
+	getProductsByUser,
 	getAllProducts,
 	updateProduct,
 	deleteProduct,
 	deleteProductsByUser,
+	getProductPagesCount,
 };

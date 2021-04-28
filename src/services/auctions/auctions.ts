@@ -4,7 +4,7 @@ import {
 	createAuction,
 	getAuctionById, getAuctionByPage,
 	getAuctionByProductId,
-	getAuctionsByUser, getPagesCount,
+	getPagesCount,
 } from "./queries";
 import {RequestError} from "../../utils/error";
 import {ErrorTypes} from "../../constants/errorConstants";
@@ -24,7 +24,7 @@ const auctions: FastifyPluginCallback = async function (
 		return res.status(201).send(auction);
 	});
 
-	fastify.get("/id/:id", {}, async (req: any, res: any) => {
+	fastify.get("/:id", {}, async (req: any, res: any) => {
 		const auction = await getAuctionById(parseInt(req.params.id));
 		if (!auction) {
 			return res.status(400).send(
@@ -34,42 +34,27 @@ const auctions: FastifyPluginCallback = async function (
 		return res.status(200).send(auction);
 	});
 
-	fastify.get("/user/:id", {}, async (req: any, res: any) => {
-		const auction = await getAuctionsByUser(parseInt(req.params.id));
-		if (!auction) {
-			return res.status(400).send(
-				new RequestError(400, ErrorTypes.auctionNotFoundError, "Auction not found"),
-			);
-		}
-		return res.status(200).send(auction);
-	});
 
 	fastify.get("/product/:id", {}, async (req: any, res: any) => {
 		const auction = await getAuctionByProductId(parseInt(req.params.id));
 		if (!auction) {
 			return res.status(400).send(
-				new RequestError(400, ErrorTypes.auctionNotFoundError, "Auction not found"),
+				new RequestError(400, ErrorTypes.auctionSubscriptionError, "Auction not created yet"),
 			);
 		}
 		return res.status(200).send(auction);
 	});
 
-	fastify.get("/pages/:perPage", async (req:any, res:any) => {
-		const pages = getPagesCount(parseInt(req.params.perPage));
-		return res.status(200).send({pages: pages});
-	});
-
-
-	fastify.get("/pages", { schema: queryStringSchema }, async (req: any, res: any) => {
-		console.log(req.query);
-		const perPage = parseInt(req.query.perPage);
-		const page = parseInt(req.query.page);
+	fastify.get("/", { schema: queryStringSchema }, async (req: any, res: any) => {
+		const perPage = parseInt(req.query.perPage) || 10;
+		const page = parseInt(req.query.page) || 1;
+		const totalPages = await getPagesCount(perPage);
 		const auctions = await getAuctionByPage(perPage, page);
 		if (!auctions) {
 			new RequestError(400, ErrorTypes.auctionNotFoundError, "Auctions not found");
 		}
-		return res.status(200).send({auctions});
-	});
+		return res.status(200).send({auctions: auctions, totalPages: totalPages, currentPage: page});
+	}); 
 };
 
 export { auctions };

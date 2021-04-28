@@ -9,5 +9,6 @@ export const enum ErrorTypes {
 	forbiddenAccessError = "forbiddenAccessError",
 	invalidProductDataError = "invalidProductDataError",
 	invalidAuctionDataError = "invalidAuctionDataError",
-	auctionNotFoundError = "auctionNotFoundError"
+	auctionNotFoundError = "auctionNotFoundError",
+	auctionSubscriptionError = "auctionSubscriptionError",
 }

@@ -28,6 +28,7 @@
         "padded-blocks": "off",
         "max-len": [1, 120, 2],
         "arrow-parens": "off",
-        "space-before-function-paren": "off"
+        "space-before-function-paren": "off",
+        "no-mixed-spaces-and-tabs": "off"
     }
 }
