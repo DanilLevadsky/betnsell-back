@@ -11,7 +11,8 @@ import {
 } from "./queries";
 import {FastifyInstance, FastifyPluginCallback} from "fastify";
 import {
-	getUserSchema,
+	generalUserSchema,
+	getUserSchema, shortUserSchema,
 	updateBalanceSchema,
 	updateEmailSchema,
 	updateMobileSchema,
@@ -24,18 +25,19 @@ import {RequestError} from "../../utils/error";
 import {ErrorTypes} from "../../constants/errorConstants";
 import jwt from "jsonwebtoken";
 import {
-	deleteProductsByUser,
+	deleteProductsByUser, getAllUsersProducts,
 	getProductPagesCount,
 	getProductsByUser,
 } from "../products/queries";
 import {
+	getAllUsersAuctions,
 	getAuctionsByUser,
 	getPagesCountByUser,
 } from "../auctions/queries";
 
 
 const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
-	fastify.get("/:id", { schema: getUserSchema }, async (req: any, res: any ) => {
+	fastify.get("/:id", { schema: shortUserSchema }, async (req: any, res: any ) => {
 		const user = await getUserById(parseInt(req.params.id));
 		if (!user) {
 			return res.status(400).send(
@@ -43,6 +45,45 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 			);
 		}
 		return res.status(200).send(user);
+	});
+
+	fastify.get("/", {schema: generalUserSchema}, async (req:any, res:any) => {
+		const token = req.headers.authorization.split(" ")[1];
+		const data: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
+		if (!data) {
+			return res.status(401).send(
+				new RequestError(401, ErrorTypes.unauthorizedError, "Unauthorized"),
+			);
+		}
+		const user = await getUserById(data.id);
+		if (!user) {
+			return res.status(400).send(
+				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
+			);
+		}
+		const products = await getAllUsersProducts(user.id);
+		if (!products) {
+			return res.status(400).send(
+				new RequestError(400, ErrorTypes.productNotFoundError, "Products not found"),
+			);
+		}
+		const auctions = await getAllUsersAuctions(user.id);
+		if (!auctions) {
+			return res.status(400).send(
+				new RequestError(400, ErrorTypes.auctionNotFoundError, "Auctions not found"),
+			);
+		}
+		return res.status(200).send({
+			id: user.id,
+			username: user.username,
+			userInfo: {
+				email: user.email,
+				mobile: user.mobile,
+				name: user.name,
+			},
+			products: products,
+			auctions: auctions,
+		});
 	});
 
 	fastify.patch("/update/username", {schema: updateUsernameSchema}, async (req: any, res: any) => {
@@ -233,8 +274,8 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 	});
 
 	fastify.get("/:userId/auctions", {}, async (req:any, res:any)=> {
-		const perPage = req.query.perPage;
-		const page = req.query.page;
+		const perPage = parseInt(req.query.perPage);
+		const page = parseInt(req.query.page);
 
 		const user = await getUserById(parseInt(req.params.userId));
 		if (!user) {

@@ -16,7 +16,7 @@ import {ErrorTypes} from "../../constants/errorConstants";
 dotenv.config();
 
 const auth: FastifyPluginCallback = async function(fastify: FastifyInstance): Promise<any> {
-
+// TODO: добавить тупую Schema в названия схем
 	fastify.post("/login/email", { schema: loginByEmail }, async (req: any, res: any) => {
 		const user = await getUserByEmail(req.body.email);
 		if (!user) {

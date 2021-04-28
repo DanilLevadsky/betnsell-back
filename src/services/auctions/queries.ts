@@ -39,7 +39,9 @@ const getPagesCount = async function(perPage: number) {
 const getPagesCountByUser = async function(perPage: number, userId: number) {
 	const length = await prisma.auction.count({
 		where: {
-			userId: userId,
+			product: {
+				userId: userId,
+			},
 		},
 	});
 	const pages = length / perPage;
@@ -61,15 +63,21 @@ const getAuctionByPage = async function (perPage: number, page: number) {
 	// }
 };
 
+const getAllUsersAuctions = async function(userId: number) {
+	return await prisma.auction.findMany({
+		where: {
+			product: {
+				userId: userId,
+			},
+		},
+	});
+};
 
 const getAuctionsByUser = async function (userId: number, perPage: number, page: number) {
 	return await prisma.auction.findMany({
 		take: perPage,
 		skip: perPage*(page-1),
 		where: {
-			status: {
-				in: ["STARTED", "WAITING", "FINISHED", "EXPIRED"],
-			},
 			product: {
 				userId: userId,
 			},
@@ -88,4 +96,5 @@ export {
 	getPagesCount,
 	getAuctionByPage,
 	getPagesCountByUser,
+	getAllUsersAuctions,
 };

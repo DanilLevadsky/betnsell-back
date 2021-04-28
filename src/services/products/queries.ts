@@ -80,6 +80,14 @@ const deleteProductsByUser = async function(userId: number) {
 	});
 };
 
+const getAllUsersProducts = async function(userId: number) {
+	return await prisma.product.findMany({
+		where: {
+			userId: userId,
+		},
+	});
+};
+
 export {
 	createProduct,
 	getProductById,
@@ -88,4 +96,5 @@ export {
 	deleteProduct,
 	deleteProductsByUser,
 	getProductPagesCount,
+	getAllUsersProducts,
 };
