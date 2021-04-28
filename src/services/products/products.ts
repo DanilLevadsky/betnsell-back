@@ -2,10 +2,24 @@ import {FastifyInstance, FastifyPluginCallback} from "fastify";
 import {
 	createProduct,
 	getProductById,
-	updateProduct,
+	getProductsByUser,
+	updateTitle,
+	updateDescription,
+	updatePhoto,
+	updatePrice,
 	deleteProduct,
+	deleteProductsByUser,
+	getProductPagesCount,
+	getAllUsersProducts,
 } from "./queries";
-import {postProductSchema} from "./schema";
+import {	
+	postProductSchema,
+	getProductSchema,
+	updateDescriptionSchema,
+	updateTitleSchema,
+	updatePhotoSchema,
+	updatePriceSchema,
+} from "./schema";
 import {RequestError} from "../../utils/error";
 import {ErrorTypes} from "../../constants/errorConstants";
 import jwt from "jsonwebtoken";
@@ -24,7 +38,6 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 				new RequestError(403, ErrorTypes.forbiddenAccessError, "Invalid product owner error"),
 			);
 		}
-		// TODO: схема - полный объект
 		const product = await createProduct(req.body);
 		if (!product) {
 			return res.status(400).send(
@@ -34,8 +47,7 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 		return res.status(201).send(product);
 	});
 
-	// TODO: create schema
-	fastify.get("/:id", {}, async (req: any, res: any) => {
+	fastify.get("/:id", { schema: getProductSchema }, async (req: any, res: any) => {
 		const product = await getProductById(parseInt(req.params.id));
 		if (!product) {
 			return res.status(400).send(
@@ -45,9 +57,7 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 		return res.status(200).send(product);
 	});
 
-	// TODO: create schema(4)
-	// TODO: update отдельные эндпоинты для каждого атрибута бд
-	fastify.patch("/update/:id", {}, async (req: any, res: any) => {
+	fastify.patch("/update/:id/title", { schema: updateTitleSchema }, async(req: any, res: any) => {
 		const token = req.headers.authorization.split(" ")[1];
 		const user: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
 		if (!user) {
@@ -62,14 +72,83 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 				new RequestError(403, ErrorTypes.forbiddenAccessError, "You cannot update this product"),
 			);
 		}
-		const updatedProduct = await updateProduct(parseInt(req.params.id), req.body);
+		const updatedProduct = await updateTitle(parseInt(req.params.id), req.body.title);
 		if (!updatedProduct) {
-			return res.status(400).send(
-				new RequestError(400, ErrorTypes.invalidUpdateInfoError, "Cannot update product"),
+			return res.status(400).send(new RequestError(400, ErrorTypes.invalidUpdateInfoError, "Cannot update product"),
 			);
 		}
 		return res.status(200).send(updatedProduct);
 	});
+
+	fastify.patch("/update/:id/description", { schema: updateDescriptionSchema }, async(req: any, res: any) => {
+		const token = req.headers.authorization.split(" ")[1];
+		const user: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
+		if (!user) {
+			return res.status(401).send(
+				new RequestError(401, ErrorTypes.unauthorizedError, "Unauthorized"),
+			);
+		}
+		const userId = user.id;
+		const product = await getProductById(parseInt(req.params.id));
+		if (product!.userId !== userId) {
+			return res.status(403).send(
+				new RequestError(403, ErrorTypes.forbiddenAccessError, "You cannot update this product"),
+			);
+		}
+		const updatedProduct = await updateDescription(parseInt(req.params.id), req.body.description);
+		if (!updatedProduct) {
+			return res.status(400).send(new RequestError(400, ErrorTypes.invalidUpdateInfoError, "Cannot update product"),
+			);
+		}
+		return res.status(200).send(updatedProduct);
+	});
+
+	fastify.patch("/update/:id/photo", { schema: updatePhotoSchema }, async(req: any, res: any) => {
+		const token = req.headers.authorization.split(" ")[1];
+		const user: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
+		if (!user) {
+			return res.status(401).send(
+				new RequestError(401, ErrorTypes.unauthorizedError, "Unauthorized"),
+			);
+		}
+		const userId = user.id;
+		const product = await getProductById(parseInt(req.params.id));
+		if (product!.userId !== userId) {
+			return res.status(403).send(
+				new RequestError(403, ErrorTypes.forbiddenAccessError, "You cannot update this product"),
+			);
+		}
+		const updatedProduct = await updatePhoto(parseInt(req.params.id), req.body.photo);
+		if (!updatedProduct) {
+			return res.status(400).send(new RequestError(400, ErrorTypes.invalidUpdateInfoError, "Cannot update product"),
+			);
+		}
+		return res.status(200).send(updatedProduct);
+	});
+
+	fastify.patch("/update/:id/price", { schema: updatePriceSchema }, async(req: any, res: any) => {
+		const token = req.headers.authorization.split(" ")[1];
+		const user: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
+		if (!user) {
+			return res.status(401).send(
+				new RequestError(401, ErrorTypes.unauthorizedError, "Unauthorized"),
+			);
+		}
+		const userId = user.id;
+		const product = await getProductById(parseInt(req.params.id));
+		if (product!.userId !== userId) {
+			return res.status(403).send(
+				new RequestError(403, ErrorTypes.forbiddenAccessError, "You cannot update this product"),
+			);
+		}
+		const updatedProduct = await updatePrice(parseInt(req.params.id), req.body.price);
+		if (!updatedProduct) {
+			return res.status(400).send(new RequestError(400, ErrorTypes.invalidUpdateInfoError, "Cannot update product"),
+			);
+		}
+		return res.status(200).send(updatedProduct);
+	});
+
 
 	fastify.delete("/delete/:id", async (req: any, res: any) => {
 		const token = req.headers.authorization.split(" ")[1];

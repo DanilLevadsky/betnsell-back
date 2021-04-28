@@ -43,7 +43,6 @@ const getProductPagesCount = async function(perPage: number, userId: number) {
 };
 
 
-
 const updateTitle = async function(id: number, title: string) {
 	return await prisma.product.update({
 		data: {
@@ -53,7 +52,7 @@ const updateTitle = async function(id: number, title: string) {
 			id: id,
 		},
 	});
-}
+};
 
 const updatePrice = async function(id: number, price: number) {
 	return await prisma.product.update({
@@ -64,7 +63,7 @@ const updatePrice = async function(id: number, price: number) {
 			id: id,
 		},
 	});
-}
+};
 
 const updateDescription = async function(id: number, description: string) {
 	return await prisma.product.update({
@@ -75,9 +74,9 @@ const updateDescription = async function(id: number, description: string) {
 			id: id,
 		},
 	});
-}
+};
 
-const updatePhoto = async function(id: number, photo: string) {
+const updatePhoto = async function(id: number, photo: any) {
 	return await prisma.product.update({
 		data: {
 			photo: photo,
@@ -86,7 +85,7 @@ const updatePhoto = async function(id: number, photo: string) {
 			id: id,
 		},
 	});
-}
+};
 
 const deleteProduct = async function(id: number) {
 	const product = await getProductById(id);

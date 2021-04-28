@@ -46,7 +46,7 @@ const updateDescriptionSchema = {
 		type: "object",
 		required: ["description"],
 		properties: {
-			description: { type: "string" },
+			description: { type: ["string", "null"] },
 		},
 	},
 	...getProductSchema,
@@ -57,7 +57,21 @@ const updatePhotoSchema = {
 		type: "object",
 		required: ["photo"],
 		properties: {
-			photo: { type: "string" },
+			photo: { type: ["string", "null"] },
+		},
+	},
+	...getProductSchema,
+};
+
+const updatePriceSchema = {
+	body: {
+		type: "object",
+		required: ["price"],
+		properties: {
+			price: {
+				type: "number",
+				min: 5,
+			},
 		},
 	},
 	...getProductSchema,
@@ -69,4 +83,5 @@ export {
 	updateDescriptionSchema,
 	updateTitleSchema,
 	updatePhotoSchema,
+	updatePriceSchema,
 };

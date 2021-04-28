@@ -3,21 +3,21 @@ import { FastifySchema } from "fastify";
 const postAuctionSchema: FastifySchema = {
 	body: {
 		type: "object",
-		required: ["lotFinishDate", "lotExpireDate", "productId",],
+		required: ["lotFinishDate", "lotExpireDate", "productId"],
 		properties: {
-			lotFinishDate: {type: "string",},
-			lotExpireDate: {type: "string",},
-			productId: {type: "number",},
+			lotFinishDate: {type: "string"},
+			lotExpireDate: {type: "string"},
+			productId: {type: "number"},
 		},
 		response: {
 			"2xx": {
 				type: "object",
 				properties: {
-					id: {type: "number",},
-					createdAt: {type: "string",},
-					lotFinishDate: {type: "string",},
-					lotExpireDate: {type: "string",},
-					productId: {type: "number",},
+					id: {type: "number"},
+					createdAt: {type: "string"},
+					lotFinishDate: {type: "string"},
+					lotExpireDate: {type: "string"},
+					productId: {type: "number"},
 				},
 			},
 		},
@@ -29,12 +29,12 @@ const getAuctionSchema = {
 		"2xx": {
 			type: "object",
 			properties: {
-				id: {type: "number",},
-				createdAt: {type: "string",},
-				lotFinishDate: {type: "string",},
-				lotExpireDate: {type: "string",},
-				productId: {type: "number",},
-				customerId: {type: "number",},
+				id: {type: "number"},
+				createdAt: {type: "string"},
+				lotFinishDate: {type: "string"},
+				lotExpireDate: {type: "string"},
+				productId: {type: "number"},
+				customerId: {type: "number"},
 			},
 		},
 	},

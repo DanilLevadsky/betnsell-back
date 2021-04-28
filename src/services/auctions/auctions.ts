@@ -8,13 +8,16 @@ import {
 } from "./queries";
 import {RequestError} from "../../utils/error";
 import {ErrorTypes} from "../../constants/errorConstants";
-import {queryStringSchema} from "./schema";
-// Todo: create schemas and import it.
+import {
+	postAuctionSchema, 
+	getAuctionSchema, 
+	queryStringSchema,
+} from "./schema";
 
 const auctions: FastifyPluginCallback = async function (
 	fastify: FastifyInstance,
 ) {
-	fastify.put("/create", {}, async (req: any, res: any) => {
+	fastify.put("/create", { schema: postAuctionSchema }, async (req: any, res: any) => {
 		const auction = await createAuction(req.body.data);
 		if (!auction) {
 			return res.status(400).send(
@@ -24,7 +27,7 @@ const auctions: FastifyPluginCallback = async function (
 		return res.status(201).send(auction);
 	});
 
-	fastify.get("/:id", {}, async (req: any, res: any) => {
+	fastify.get("/:id", { schema: getAuctionSchema }, async (req: any, res: any) => {
 		const auction = await getAuctionById(parseInt(req.params.id));
 		if (!auction) {
 			return res.status(400).send(
@@ -35,7 +38,7 @@ const auctions: FastifyPluginCallback = async function (
 	});
 
 
-	fastify.get("/product/:id", {}, async (req: any, res: any) => {
+	fastify.get("/product/:id", { schema: getAuctionSchema }, async (req: any, res: any) => {
 		const auction = await getAuctionByProductId(parseInt(req.params.id));
 		if (!auction) {
 			return res.status(400).send(
