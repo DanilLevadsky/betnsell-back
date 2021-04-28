@@ -16,6 +16,7 @@ const generalUserSchema: FastifySchema = {
 			id: {type: "number"},
 			username: {type: "string"},
 			balance: {type: "number"},
+			profilePic: {type: ["string", "null"]},
 			userInfo: {
 				type: "object",
 				properties: {

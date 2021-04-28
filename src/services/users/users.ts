@@ -12,7 +12,7 @@ import {
 import {FastifyInstance, FastifyPluginCallback} from "fastify";
 import {
 	generalUserSchema,
-	getUserSchema, shortUserSchema,
+	shortUserSchema,
 	updateBalanceSchema,
 	updateEmailSchema,
 	updateMobileSchema,
@@ -312,6 +312,5 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 	});
 
 };
-// TODO: разобраться с кодами я везде ебанул 400 или 200 надо глянуть где надо поменять
+
 export { users };
-// TODO: общий юзер огромная модель
