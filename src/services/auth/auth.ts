@@ -24,13 +24,13 @@ const auth: FastifyPluginCallback = async function(fastify: FastifyInstance): Pr
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
 			);
 		}
-		const isCorrect = await compareSync(req.body.password, user.password);
+		const isCorrect = compareSync(req.body.password, user.password);
 		if (!isCorrect) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.wrongPasswordOrLoginError, "Invalid login or password"),
 			);
 		}
-		const accessToken = await jwt.sign(user, <string>process.env.ACCESS_TOKEN_SECRET, { expiresIn: 21600 });
+		const accessToken = jwt.sign(user, <string>process.env.ACCESS_TOKEN_SECRET, { expiresIn: 21600 });
 		return res.status(200).send({ jwt: accessToken, userId: user.id, expiresIn: Date.now() + 21600000});
 
 	});
@@ -42,13 +42,13 @@ const auth: FastifyPluginCallback = async function(fastify: FastifyInstance): Pr
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
 			);
 		}
-		const isCorrect = await compareSync(req.body.password, user.password);
+		const isCorrect = compareSync(req.body.password, user.password);
 		if (!isCorrect) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.wrongPasswordOrLoginError, "Invalid login or password"),
 			);
 		}
-		const accessToken = await jwt.sign(user, <string>process.env.ACCESS_TOKEN_SECRET, { expiresIn: 21600 });
+		const accessToken = jwt.sign(user, <string>process.env.ACCESS_TOKEN_SECRET, { expiresIn: 21600 });
 		return res.status(200).send({ jwt: accessToken, userId: user.id, expiresIn: Date.now() + 21600000});
 	});
 
@@ -80,7 +80,7 @@ const auth: FastifyPluginCallback = async function(fastify: FastifyInstance): Pr
 		};
 		user = await createUser(data);
 		if (user) {
-			const accessToken = await jwt.sign(user as object, <string>process.env.ACCESS_TOKEN_SECRET, {expiresIn: 21600});
+			const accessToken = jwt.sign(user as object, <string>process.env.ACCESS_TOKEN_SECRET, {expiresIn: 21600});
 			return res.status(201).send({jwt: accessToken, userId: user.id, expiresIn: Date.now() + 21600000});
 		}
 	});

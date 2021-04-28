@@ -1,7 +1,6 @@
 import {FastifyInstance, FastifyPluginCallback} from "fastify";
 import {
 	createProduct,
-	getAllProducts,
 	getProductById,
 	updateProduct,
 	deleteProduct,
@@ -58,7 +57,7 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 		}
 		const userId = user.id;
 		const product = await getProductById(parseInt(req.params.id));
-		if (product.userId !== userId) {
+		if (product!.userId !== userId) {
 			return res.status(403).send(
 				new RequestError(403, ErrorTypes.forbiddenAccessError, "You cannot update this product"),
 			);
