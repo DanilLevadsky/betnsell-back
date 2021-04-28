@@ -2,15 +2,11 @@ import {FastifyInstance, FastifyPluginCallback} from "fastify";
 import {
 	createProduct,
 	getProductById,
-	getProductsByUser,
 	updateTitle,
 	updateDescription,
 	updatePhoto,
 	updatePrice,
 	deleteProduct,
-	deleteProductsByUser,
-	getProductPagesCount,
-	getAllUsersProducts,
 } from "./queries";
 import {	
 	postProductSchema,
