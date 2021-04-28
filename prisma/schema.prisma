@@ -42,8 +42,8 @@ model Auction {
   createdAt     DateTime   @default(now()) @map("created_at")
   status        Status     @default(STARTED)
   updatedAt     DateTime   @updatedAt @map("updated_at")
-  lotFinishDate DateTime?  @map("lot_finish_date")
-  lotExpireDate DateTime?  @map("lot_expire_date")
+  lotFinishDate DateTime   @map("lot_finish_date")
+  lotExpireDate DateTime   @map("lot_expire_date")
   // auction <- customer one-to-many relation
   customers     Customer[] @relation("customers")
   // auction <-> product one-to-one relation

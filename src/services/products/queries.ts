@@ -42,23 +42,51 @@ const getProductPagesCount = async function(perPage: number, userId: number) {
 	}
 };
 
-const updateProduct = async function(id: number, data: any) {
-	const product = await getProductById(id);
-	let updatedProduct;
-	if (product) {
-		updatedProduct = await prisma.product.update({
-			where: {
-				id: product.id,
-			},
-			data: {
-				...data,
-			},
-		}).catch((err: any) => {
-			return { message: err.message };
-		});
-	}
-	return updatedProduct;
-};
+
+
+const updateTitle = async function(id: number, title: string) {
+	return await prisma.product.update({
+		data: {
+			title: title,
+		},
+		where: {
+			id: id,
+		},
+	});
+}
+
+const updatePrice = async function(id: number, price: number) {
+	return await prisma.product.update({
+		data: {
+			price: price,
+		},
+		where: {
+			id: id,
+		},
+	});
+}
+
+const updateDescription = async function(id: number, description: string) {
+	return await prisma.product.update({
+		data: {
+			description: description,
+		},
+		where: {
+			id: id,
+		},
+	});
+}
+
+const updatePhoto = async function(id: number, photo: string) {
+	return await prisma.product.update({
+		data: {
+			photo: photo,
+		},
+		where: {
+			id: id,
+		},
+	});
+}
 
 const deleteProduct = async function(id: number) {
 	const product = await getProductById(id);
@@ -92,7 +120,10 @@ export {
 	createProduct,
 	getProductById,
 	getProductsByUser,
-	updateProduct,
+	updateTitle,
+	updateDescription,
+	updatePhoto,
+	updatePrice,
 	deleteProduct,
 	deleteProductsByUser,
 	getProductPagesCount,

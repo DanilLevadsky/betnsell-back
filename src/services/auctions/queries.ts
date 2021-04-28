@@ -60,7 +60,6 @@ const getAuctionByPage = async function (perPage: number, page: number) {
 		skip: perPage*(page-1),
 		take: perPage,
 	});
-	// }
 };
 
 const getAllUsersAuctions = async function(userId: number) {
