@@ -69,23 +69,11 @@ const loginGet: FastifySchema = {
 const signUpPost: FastifySchema = {
 	body: {
 		type: "object",
-		required: ["username", "password", "email", "mobile", "name", "profilePic"],
+		required: ["username", "password", "email"],
 		properties: {
-			password: {
-				type: "string",
-				minLength: 8,
-			},
-			username: {
-				type: "string",
-				minLength: 5,
-			},
-			email: {
-				type: "string",
-				minLength: 8,
-			},
-			mobile: { type: ["string", "null"] },
-			name: { type: ["string", "null"] },
-			profilePic: { type: ["string", "null"] },
+			password: { type: "string" },
+			username: { type: "string" },
+			email: { type: "string" },
 		},
 	},
 	response: {
