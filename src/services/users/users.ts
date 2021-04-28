@@ -76,6 +76,7 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 		return res.status(200).send({
 			id: user.id,
 			username: user.username,
+			balance: user.balance,
 			userInfo: {
 				email: user.email,
 				mobile: user.mobile,
