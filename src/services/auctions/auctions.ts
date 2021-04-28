@@ -18,7 +18,7 @@ const auctions: FastifyPluginCallback = async function (
 	fastify: FastifyInstance,
 ) {
 	fastify.put("/create", { schema: postAuctionSchema }, async (req: any, res: any) => {
-		const auction = await createAuction(req.body.data);
+		const auction = await createAuction(req.body);
 		if (!auction) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.invalidAuctionDataError, "Cannot create auction"),
