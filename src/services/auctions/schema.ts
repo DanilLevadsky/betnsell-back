@@ -3,10 +3,11 @@ import { FastifySchema } from "fastify";
 const postAuctionSchema: FastifySchema = {
 	body: {
 		type: "object",
-		required: ["lotFinishDate", "lotExpireDate", "productId"],
+		// TODO: удалить поля с датами и сделать чтоб они автогенерировались
+		// TODO: auction add ticket count and ticket price
+		// TODO: РЕМУВ product price
+		required: ["productId"],
 		properties: {
-			lotFinishDate: {type: "string"},
-			lotExpireDate: {type: "string"},
 			productId: {type: "number"},
 		},
 		response: {

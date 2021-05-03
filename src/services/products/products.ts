@@ -29,12 +29,8 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 				new RequestError(401, ErrorTypes.unauthorizedError, "Unauthorized"),
 			);
 		}
-		if (data.id !== req.body.userId) {
-			return res.status(403).send(
-				new RequestError(403, ErrorTypes.forbiddenAccessError, "Invalid product owner error"),
-			);
-		}
-		const product = await createProduct(req.body);
+		const productInfo = {...req.body, userId: data.id};
+		const product = await createProduct(productInfo);
 		if (!product) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.invalidProductDataError, "Cannot create product with such data"),
@@ -53,7 +49,7 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 		return res.status(200).send(product);
 	});
 
-	fastify.patch("/update/:id/title", { schema: updateTitleSchema }, async(req: any, res: any) => {
+	fastify.patch("/:id/title", { schema: updateTitleSchema }, async(req: any, res: any) => {
 		const token = req.headers.authorization.split(" ")[1];
 		const user: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
 		if (!user) {
@@ -76,7 +72,7 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 		return res.status(200).send(updatedProduct);
 	});
 
-	fastify.patch("/update/:id/description", { schema: updateDescriptionSchema }, async(req: any, res: any) => {
+	fastify.patch("/:id/description", { schema: updateDescriptionSchema }, async(req: any, res: any) => {
 		const token = req.headers.authorization.split(" ")[1];
 		const user: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
 		if (!user) {
@@ -99,7 +95,7 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 		return res.status(200).send(updatedProduct);
 	});
 
-	fastify.patch("/update/:id/photo", { schema: updatePhotoSchema }, async(req: any, res: any) => {
+	fastify.patch("/:id/photo", { schema: updatePhotoSchema }, async(req: any, res: any) => {
 		const token = req.headers.authorization.split(" ")[1];
 		const user: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
 		if (!user) {
@@ -122,7 +118,7 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 		return res.status(200).send(updatedProduct);
 	});
 
-	fastify.patch("/update/:id/price", { schema: updatePriceSchema }, async(req: any, res: any) => {
+	fastify.patch("/:id/price", { schema: updatePriceSchema }, async(req: any, res: any) => {
 		const token = req.headers.authorization.split(" ")[1];
 		const user: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
 		if (!user) {
@@ -146,7 +142,7 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 	});
 
 
-	fastify.delete("/delete/:id", async (req: any, res: any) => {
+	fastify.delete("/:id", async (req: any, res: any) => {
 		const token = req.headers.authorization.split(" ")[1];
 		const user: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
 		if (!user) {

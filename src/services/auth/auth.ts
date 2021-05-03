@@ -12,7 +12,6 @@ import {
 import {RequestError} from "../../utils/error";
 import {ErrorTypes} from "../../constants/errorConstants";
 
-
 dotenv.config();
 
 const auth: FastifyPluginCallback = async function(fastify: FastifyInstance): Promise<any> {

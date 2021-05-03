@@ -3,14 +3,13 @@ import { FastifySchema } from "fastify";
 const postProductSchema: FastifySchema = {
 	body: {
 		type: "object",
-		required: ["title", "userId", "price", "description", "photo"],
+		required: ["title", "price", "description", "photo"],
 		properties: {
 			title: { type: "string" },
 			price: {
 				type: "number",
 				min: 5,
 			},
-			userId: { type: "number" },
 			description: { type: ["string", "null"] },
 			photo: { type: ["string", "null"] },
 		},
