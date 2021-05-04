@@ -10,13 +10,13 @@ const createAuction = async function (data: any) {
 	});
 	await prisma.auction.update({
 		data: {
-			lotExpireDate: new Date(Auction.createdAt.setDate(Auction.createdAt.getDate() + 14))
+			lotExpireDate: new Date(Auction.createdAt.setDate(Auction.createdAt.getDate() + 14)),
 		},
 		where: {
-			id: Auction.id
-		}
-	})
-	return getAuctionById(Auction.id)
+			id: Auction.id,
+		},
+	});
+	return getAuctionById(Auction.id);
 };
 
 const getAuctionById = async function (id: number) {
