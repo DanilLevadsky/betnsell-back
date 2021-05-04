@@ -3,13 +3,9 @@ import { FastifySchema } from "fastify";
 const postProductSchema: FastifySchema = {
 	body: {
 		type: "object",
-		required: ["title", "price", "description", "photo"],
+		required: ["title", "description", "photo"],
 		properties: {
 			title: { type: "string" },
-			price: {
-				type: "number",
-				min: 5,
-			},
 			description: { type: ["string", "null"] },
 			photo: { type: ["string", "null"] },
 		},
@@ -21,7 +17,6 @@ const getProductSchema: FastifySchema = {
 		"2xx": {
 			id: { type: "number" },
 			title: { type: "string" },
-			price: { type: "number" },
 			description: { type: ["string", "null"] },
 			photo: { type: ["string", "null"] },
 			userId: { type: "number" },
@@ -61,26 +56,10 @@ const updatePhotoSchema = {
 	},
 	...getProductSchema,
 };
-
-const updatePriceSchema = {
-	body: {
-		type: "object",
-		required: ["price"],
-		properties: {
-			price: {
-				type: "number",
-				min: 5,
-			},
-		},
-	},
-	...getProductSchema,
-};
-
 export {
 	postProductSchema,
 	getProductSchema,
 	updateDescriptionSchema,
 	updateTitleSchema,
 	updatePhotoSchema,
-	updatePriceSchema,
 };

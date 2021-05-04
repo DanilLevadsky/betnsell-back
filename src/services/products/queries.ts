@@ -54,17 +54,6 @@ const updateTitle = async function(id: number, title: string) {
 	});
 };
 
-const updatePrice = async function(id: number, price: number) {
-	return await prisma.product.update({
-		data: {
-			price: price,
-		},
-		where: {
-			id: id,
-		},
-	});
-};
-
 const updateDescription = async function(id: number, description: string) {
 	return await prisma.product.update({
 		data: {
@@ -122,7 +111,6 @@ export {
 	updateTitle,
 	updateDescription,
 	updatePhoto,
-	updatePrice,
 	deleteProduct,
 	deleteProductsByUser,
 	getProductPagesCount,

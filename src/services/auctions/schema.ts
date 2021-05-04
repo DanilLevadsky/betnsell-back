@@ -3,12 +3,11 @@ import { FastifySchema } from "fastify";
 const postAuctionSchema: FastifySchema = {
 	body: {
 		type: "object",
-		// TODO: удалить поля с датами и сделать чтоб они автогенерировались
-		// TODO: auction add ticket count and ticket price
-		// TODO: РЕМУВ product price
-		required: ["productId"],
+		required: ["productId", "pricePerTicket", "totalTickets",],
 		properties: {
 			productId: {type: "number"},
+			pricePerTicket: {type: "number"},
+			totalTickets: {type: "number"},
 		},
 		response: {
 			"2xx": {

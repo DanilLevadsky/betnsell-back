@@ -69,15 +69,7 @@ const auth: FastifyPluginCallback = async function(fastify: FastifyInstance): Pr
 				new RequestError(400, ErrorTypes.userAlreadyExistsError, "User with this username/email is already exists"),
 			);
 		}
-		const data = {
-			username: req.body.username,
-			email: req.body.email,
-			password: req.body.password,
-			profilePic: req.body.profilePic || null,
-			mobileNum: req.body.mobile,
-			name: req.body.name || null,
-		};
-		user = await createUser(data);
+		user = await createUser(req.body);
 		if (user) {
 			const accessToken = jwt.sign(user as object, <string>process.env.ACCESS_TOKEN_SECRET, {expiresIn: 21600});
 			return res.status(201).send({jwt: accessToken, userId: user.id, expiresIn: Date.now() + 21600000});

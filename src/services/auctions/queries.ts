@@ -3,11 +3,20 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const createAuction = async function (data: any) {
-	return await prisma.auction.create({
+	const Auction = await prisma.auction.create({
 		data: {
 			...data,
 		},
 	});
+	await prisma.auction.update({
+		data: {
+			lotExpireDate: new Date(Auction.createdAt.setDate(Auction.createdAt.getDate() + 14))
+		},
+		where: {
+			id: Auction.id
+		}
+	})
+	return getAuctionById(Auction.id)
 };
 
 const getAuctionById = async function (id: number) {

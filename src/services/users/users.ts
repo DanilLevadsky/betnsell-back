@@ -250,8 +250,8 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 	});
 
 	fastify.get("/:userId/products", {}, async (req:any, res:any) => {
-		const perPage = req.query.perPage;
-		const page = req.query.page;
+		const perPage = parseInt(req.query.perPage) || 10;
+		const page = parseInt(req.query.page) || 1;
 
 		const user = await getUserById(parseInt(req.params.userId));
 		if (!user) {
@@ -275,8 +275,8 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 	});
 
 	fastify.get("/:userId/auctions", {}, async (req:any, res:any)=> {
-		const perPage = parseInt(req.query.perPage);
-		const page = parseInt(req.query.page);
+		const perPage = parseInt(req.query.perPage) || 10;
+		const page = parseInt(req.query.page) || 1;
 
 		const user = await getUserById(parseInt(req.params.userId));
 		if (!user) {

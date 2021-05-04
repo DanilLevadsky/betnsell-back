@@ -8,50 +8,39 @@ generator client {
 }
 
 model User {
-  id         Int        @id @default(autoincrement())
-  username   String     @unique
-  email      String     @unique
+  id         Int       @id @default(autoincrement())
+  username   String    @unique
+  email      String    @unique
   password   String
-  profilePic String?    @map("profile_pic")
-  mobile     String?    @unique @map("mobile_number")
-  balance    Int        @default(0)
+  profilePic String?   @map("profile_pic")
+  mobile     String?   @unique @map("mobile_number")
+  balance    Int       @default(0)
   name       String?
-  // customer <- user one-to-many relation
-  customers  Customer[]
-  // user <- producte one-to-many relation
+  // user <- product one-to-many relation
   Product    Product[]
-}
-
-model Customer {
-  id        Int      @id @default(autoincrement())
-  sum       Int
-  // auction <- customer one-to-many relation
-  customer  Auction  @relation("customers", fields: [auctionId], references: [id])
-  auctionId Int
-  // customer <- user one-to-many relation
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int
-  // auction <-> customer one-to-one relation
-  winner    Auction? @relation("winner")
-  // customer <- ticket one-to-many relation
-  tickets   Ticket[]
+  // user <- auction one-to-many relation
+  Auction    Auction[] @relation("winner")
+  Auctions   Auction[] @relation("participants")
+  Ticket     Ticket[]
 }
 
 model Auction {
-  id            Int        @id @default(autoincrement())
-  createdAt     DateTime   @default(now()) @map("created_at")
-  status        Status     @default(STARTED)
-  updatedAt     DateTime   @updatedAt @map("updated_at")
-  lotFinishDate DateTime   @map("lot_finish_date")
-  lotExpireDate DateTime   @map("lot_expire_date")
-  // auction <- customer one-to-many relation
-  customers     Customer[] @relation("customers")
+  id             Int       @id @default(autoincrement())
+  createdAt      DateTime  @default(now()) @map("created_at")
+  status         Status    @default(STARTED)
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  lotFinishDate  DateTime? @map("lot_finish_date")
+  // TODO: lotExpireDate = createdAt + 2 weeks
+  lotExpireDate  DateTime? @map("lot_expire_date")
+  pricePerTicket Int       @map("price_per_ticket")
+  totalTickets   Int       @map("total_tickets")
   // auction <-> product one-to-one relation
-  product       Product    @relation(fields: [productId], references: [id])
-  productId     Int
-  // auction <-> customer one-to-one relation
-  customer      Customer?  @relation("winner", fields: [customerId], references: [id])
-  customerId    Int?       @map("winner")
+  product        Product   @relation(fields: [productId], references: [id])
+  productId      Int
+  // auction -> user one-to-many relation
+  Winner         User?     @relation("winner", fields: [winnerId], references: [id])
+  winnerId       Int?      @map("winner")
+  Participants   User[]    @relation("participants")
   // auction <- ticket one-to-many relation
   //tickets       Ticket[]
 }
@@ -59,7 +48,6 @@ model Auction {
 model Product {
   id          Int      @id @default(autoincrement())
   title       String
-  price       Int
   description String?
   photo       String?
   // auction <-> product one-to-one relation
@@ -70,12 +58,12 @@ model Product {
 }
 
 model Ticket {
-  id         Int       @id @default(autoincrement())
-  isWinning  Boolean   @default(false)
+  id        Int     @id @default(autoincrement())
+  isWinning Boolean @default(false)
   //  Auction    Auction   @relation(fields: [auctionId], references: [id])
-  auctionId  Int
-  Customer   Customer? @relation(fields: [customerId], references: [id])
-  customerId Int?      @map("owner")
+  auctionId Int
+  user      User?   @relation(fields: [userId], references: [id])
+  userId    Int?    @map("owner")
 }
 
 // Status table resembles to current condition of auction
