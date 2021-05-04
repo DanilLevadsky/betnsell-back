@@ -1,0 +1,81 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  username   String    @unique
+  email      String    @unique
+  password   String
+  profilePic String?   @map("profile_pic")
+  mobile     String?   @unique @map("mobile_number")
+  balance    Int       @default(0)
+  name       String?
+  // user <- product one-to-many relation
+  Product    Product[]
+  // user <- auction one-to-many relation
+  Auction    Auction[] @relation("winner")
+  Auctions   Auction[] @relation("participants")
+  Ticket     Ticket[]
+}
+
+model Auction {
+  id             Int       @id @default(autoincrement())
+  createdAt      DateTime  @default(now()) @map("created_at")
+  status         Status    @default(STARTED)
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  lotFinishDate  DateTime? @map("lot_finish_date")
+  // TODO: lotExpireDate = createdAt + 2 weeks
+  lotExpireDate  DateTime? @map("lot_expire_date")
+  pricePerTicket Int       @map("price_per_ticket")
+  totalTickets   Int       @map("total_tickets")
+  // auction <-> product one-to-one relation
+  product        Product   @relation(fields: [productId], references: [id])
+  productId      Int
+  // auction -> user one-to-many relation
+  Winner         User?     @relation("winner", fields: [winnerId], references: [id])
+  winnerId       Int?      @map("winner")
+  Participants   User[]    @relation("participants")
+  // auction <- ticket one-to-many relation
+  //tickets       Ticket[]
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  photo       String?
+  // auction <-> product one-to-one relation
+  auction     Auction?
+  // product -> user one-to-many relation
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int      @map("owner")
+}
+
+model Ticket {
+  id        Int     @id @default(autoincrement())
+  isWinning Boolean @default(false)
+  //  Auction    Auction   @relation(fields: [auctionId], references: [id])
+  auctionId Int
+  user      User?   @relation(fields: [userId], references: [id])
+  userId    Int?    @map("owner")
+}
+
+// Status table resembles to current condition of auction
+enum Status {
+  // Auction created.
+  STARTED   @map("started")
+  // Waiting lot to be sent
+  WAITING   @map("waiting")
+  // Owner failed to send the lot in time.
+  EXPIRED   @map("expired")
+  // Winner received the lot.
+  FINISHED  @map("finished")
+
+  @@map("_Status")
+}
