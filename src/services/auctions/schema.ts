@@ -3,7 +3,7 @@ import { FastifySchema } from "fastify";
 const postAuctionSchema: FastifySchema = {
 	body: {
 		type: "object",
-		required: ["productId", "pricePerTicket", "totalTickets",],
+		required: ["productId", "pricePerTicket", "totalTickets"],
 		properties: {
 			productId: {type: "number"},
 			pricePerTicket: {type: "number"},
