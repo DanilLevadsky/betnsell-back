@@ -58,12 +58,13 @@ model Product {
 }
 
 model Ticket {
-  id        Int     @id @default(autoincrement())
-  isWinning Boolean @default(false)
+  id           Int     @id @default(autoincrement())
+  isWinning    Boolean @default(false)
+  ticketNumber Int
   //  Auction    Auction   @relation(fields: [auctionId], references: [id])
-  auctionId Int
-  user      User?   @relation(fields: [userId], references: [id])
-  userId    Int?    @map("owner")
+  auctionId    Int
+  user         User?   @relation(fields: [userId], references: [id])
+  userId       Int?    @map("owner")
 }
 
 // Status table resembles to current condition of auction

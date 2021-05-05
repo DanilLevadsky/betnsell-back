@@ -7,6 +7,7 @@ const createTickets = async function(count: number, auctionId: number) {
 		await prisma.ticket.create({
 			data: {
 				auctionId: auctionId,
+				ticketNumber: (i + 1),
 			},
 		});
 	}
@@ -18,11 +19,15 @@ const generateWinnerTicket = async function(auctionId: number) {
 			auctionId: auctionId,
 		},
 	});
-	const count = await tickets.count();
-	const forUpdate = Math.floor(Math.random() * count);
-	return await tickets[forUpdate].update({
+	const count = tickets.length;
+	const forUpdate = Math.floor(Math.random() * count) + 1;
+	return await prisma.ticket.updateMany({
 		data: {
 			isWinning: true,
+		},
+		where: {
+			ticketNumber: forUpdate,
+			auctionId: auctionId,
 		},
 	});
 };
