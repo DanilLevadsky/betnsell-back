@@ -35,7 +35,6 @@ const generalUserSchema: FastifySchema = {
 						description: {type: ["string", "null"]},
 						photo: {type: ["string", "null"]},
 						userId: {type: "number"},
-						price: {type: "number"},
 					},
 				},
 			},
@@ -45,6 +44,9 @@ const generalUserSchema: FastifySchema = {
 					type: "object",
 					properties: {
 						id: {type: "number"},
+						pricePerTicket: {type: "number"},
+						totalTickets: {type: "number"},
+						totalPrice: {type: "number"},
 						createdAt: {type: "string"},
 						updatedAt: {type: "string"},
 						status: {type: "string"},

@@ -5,4 +5,4 @@ build/
 dist/
 .DS_Store
 config/
-migrations/
+prisma/migrations
