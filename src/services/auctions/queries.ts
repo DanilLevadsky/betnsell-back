@@ -32,7 +32,7 @@ const getAuctionById = async function (id: number) {
 };
 
 const getAuctionByProductId = async function (productId: number) {
-	return await prisma.auction.findFirst({
+	return await prisma.auction.findUnique({
 		where: {
 			productId: productId,
 		},

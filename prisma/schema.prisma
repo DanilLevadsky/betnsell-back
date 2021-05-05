@@ -38,7 +38,7 @@ model Auction {
   totalPrice     Int       @map("total_price")
   // auction <-> product one-to-one relation
   product        Product   @relation(fields: [productId], references: [id])
-  productId      Int
+  productId      Int       @unique
   // auction -> user one-to-many relation
   Winner         User?     @relation("winner", fields: [winnerId], references: [id])
   winnerId       Int?      @map("winner")

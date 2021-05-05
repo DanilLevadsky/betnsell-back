@@ -2,17 +2,19 @@ import {FastifyInstance, FastifyPluginCallback} from "fastify";
 
 import {
 	createAuction,
-	getAuctionById, getAuctionByPage,
+	getAuctionById,
+	getAuctionByPage,
 	getAuctionByProductId,
 	getPagesCount,
 } from "./queries";
 import {RequestError} from "../../utils/error";
 import {ErrorTypes} from "../../constants/errorConstants";
 import {
-	postAuctionSchema, 
-	getAuctionSchema, 
+	getAuctionSchema,
+	postAuctionSchema,
 	queryStringSchema,
 } from "./schema";
+import {getProductById} from "../products/queries";
 
 const auctions: FastifyPluginCallback = async function (
 	fastify: FastifyInstance,
@@ -34,7 +36,13 @@ const auctions: FastifyPluginCallback = async function (
 				new RequestError(400, ErrorTypes.auctionNotFoundError, "Auction not found"),
 			);
 		}
-		return res.status(200).send(auction);
+		const product = await getProductById(auction.productId);
+		if (!product) {
+			return res.status(400).send(
+				new RequestError(400, ErrorTypes.productNotFoundError, "Cannot find this product"),
+			);
+		}
+		return res.status(200).send({...auction, product: product});
 	});
 
 
@@ -45,7 +53,13 @@ const auctions: FastifyPluginCallback = async function (
 				new RequestError(400, ErrorTypes.auctionSubscriptionError, "Auction not created yet"),
 			);
 		}
-		return res.status(200).send(auction);
+		const product = await getProductById(parseInt(req.params.id));
+		if (!product) {
+			return res.status(400).send(
+				new RequestError(400, ErrorTypes.productNotFoundError, "Cannot find this product"),
+			);
+		}
+		return res.status(200).send({...auction, product: product});
 	});
 
 	fastify.get("/", { schema: queryStringSchema }, async (req: any, res: any) => {
