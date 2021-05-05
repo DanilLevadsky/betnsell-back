@@ -7,6 +7,7 @@ const createAuction = async function (data: any) {
 	const Auction = await prisma.auction.create({
 		data: {
 			...data,
+			totalPrice: data.totalTickets * data.pricePerTicket
 		},
 	});
 	await prisma.auction.update({
