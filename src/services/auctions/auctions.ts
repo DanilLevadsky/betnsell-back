@@ -10,9 +10,9 @@ import {
 import {RequestError} from "../../utils/error";
 import {ErrorTypes} from "../../constants/errorConstants";
 import {
+	getAllAuctionsSchema,
 	getAuctionSchema,
 	postAuctionSchema,
-	queryStringSchema,
 } from "./schema";
 import {getProductById} from "../products/queries";
 
@@ -26,6 +26,7 @@ const auctions: FastifyPluginCallback = async function (
 				new RequestError(400, ErrorTypes.invalidAuctionDataError, "Cannot create auction"),
 			);
 		}
+
 		return res.status(201).send(auction);
 	});
 
@@ -62,7 +63,7 @@ const auctions: FastifyPluginCallback = async function (
 		return res.status(200).send({...auction, product: product});
 	});
 
-	fastify.get("/", { schema: queryStringSchema }, async (req: any, res: any) => {
+	fastify.get("/", { schema: getAllAuctionsSchema }, async (req: any, res: any) => {
 		const perPage = parseInt(req.query.perPage) || 10;
 		const page = parseInt(req.query.page) || 1;
 		const totalPages = await getPagesCount(perPage);
@@ -70,7 +71,18 @@ const auctions: FastifyPluginCallback = async function (
 		if (!auctions) {
 			new RequestError(400, ErrorTypes.auctionNotFoundError, "Auctions not found");
 		}
-		return res.status(200).send({auctions: auctions, totalPages: totalPages, currentPage: page});
+		for (let i = 0; i < auctions.length; i++) {
+			auctions[i] = {
+				...auctions[i],
+				product: await getProductById(auctions[i].productId),
+			};
+		}
+		return res.status(200).send({
+			pageSize: perPage,
+			currentPage: page,
+			totalPages: totalPages,
+			auctions: auctions,
+		});
 	}); 
 };
 
