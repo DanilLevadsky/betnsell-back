@@ -8,13 +8,15 @@ import {
 	updatePhoto,
 	deleteProduct,
 } from "./queries";
-import {	
+import {
+	generalProductSchema,
 	postProductSchema,
 	getProductSchema,
 	updateDescriptionSchema,
 	updateTitleSchema,
 	updatePhotoSchema,
 } from "./schema";
+import {getAuctionByProductId} from "../auctions/queries";
 import {RequestError} from "../../utils/error";
 import {ErrorTypes} from "../../constants/errorConstants";
 import jwt from "jsonwebtoken";
@@ -31,14 +33,22 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 		return res.status(201).send(product);
 	});
 
-	fastify.get("/:id", { schema: getProductSchema }, async (req: any, res: any) => {
+	fastify.get("/:id", { schema: generalProductSchema }, async (req: any, res: any) => {
 		const product = await getProductById(parseInt(req.params.id));
 		if (!product) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.productNotFoundError, "There are no products with such id"),
 			);
 		}
-		return res.status(200).send(product);
+		const auction = await getAuctionByProductId(product.id);
+		return res.status(200).send({
+			id: product.id,
+			title: product.title,
+			description: product.description,
+			photo: product.photo,
+			userId: product.userId,
+			auction: auction,
+		});
 	});
 
 	fastify.patch("/:id/title", { schema: updateTitleSchema, preValidation: isAuth }, async(req: any, res: any) => {
