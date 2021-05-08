@@ -69,6 +69,8 @@ model Ticket {
   // user <- ticket one-to-many relation
   user         User?   @relation(fields: [userId], references: [id])
   userId       Int?    @map("owner")
+
+  @@unique([auctionId, isWinning])
 }
 
 // Status table resembles to current condition of auction

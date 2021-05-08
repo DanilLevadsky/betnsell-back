@@ -40,7 +40,6 @@ const getAuctionSchema = {
 				totalTickets: {type: "number"},
 				product: {
 					type: "object",
-					required: ["id", "title", "description", "photo", "userId"],
 					properties: {
 						id: {type: "number"},
 						title: {type: "string"},
