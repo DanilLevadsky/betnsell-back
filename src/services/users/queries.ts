@@ -49,14 +49,11 @@ const ifUserExists = async function(email: string, username: string) {
 };
 
 const getUserById = async function(id: number) {
-	const user = await prisma.user.findUnique({
+	return await prisma.user.findUnique({
 		where: {
 			id: id,
 		},
-	},
-	);
-
-	return user;
+	});
 };
 
 const updateUsername = async function (id: number, username: string) {

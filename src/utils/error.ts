@@ -13,4 +13,3 @@ export class RequestError {
 		this.time = Date.now();
 	}
 }
-

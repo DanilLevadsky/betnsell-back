@@ -11,7 +11,6 @@ import {
 import {
 	generalProductSchema,
 	postProductSchema,
-	getProductSchema,
 	updateDescriptionSchema,
 	updateTitleSchema,
 	updatePhotoSchema,
@@ -19,7 +18,6 @@ import {
 import {getAuctionByProductId} from "../auctions/queries";
 import {RequestError} from "../../utils/error";
 import {ErrorTypes} from "../../constants/errorConstants";
-import jwt from "jsonwebtoken";
 
 const products: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 	fastify.put("/create", { schema: postProductSchema, preValidation: isAuth }, async (req: any, res: any) => {
