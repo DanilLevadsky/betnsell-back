@@ -223,7 +223,7 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 			pageSize: perPage,
 			products: products,
 			totalPages: totalPages,
-			content: page,
+			content: products,
 		});
 	});
 

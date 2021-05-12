@@ -74,6 +74,7 @@ const purchaseTicket = async function(
 				id: ticket.id,
 			},
 		});
+		await updateAuction(auctionId);
 		return ticket;
 	}
 	return new RequestError(400, ErrorTypes.auctionSubscriptionError, "cannot purchase ticket");
@@ -85,6 +86,32 @@ const getTickets = async function(auctionId: number) {
 			auctionId: auctionId,
 		},
 	});
+};
+
+const updateAuction = async function(auctionId: number) {
+	const free = await prisma.ticket.count({
+		where: {
+			auctionId: auctionId,
+			userId: null,
+		},
+	});
+	if (free == 0) {
+		const winner = await prisma.ticket.findFirst({
+			where: {
+				auctionId: auctionId,
+				isWinning: true,
+			},
+		});
+		await prisma.auction.update({
+			where: {
+				id: auctionId,
+			},
+			data: {
+				winnerId: winner.userId,
+				status: "FINISHED",
+			},
+		});
+	}
 };
 
 export {
