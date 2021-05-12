@@ -1,5 +1,31 @@
 import { FastifySchema } from "fastify";
 
+const shortAuctionSchema: FastifySchema = {
+	response: {
+		"2xx": {
+			type: "object",
+			properties: {
+				id: {type: "number"},
+				product: {
+					type: "object",
+					properties: {
+						id: {type: "number"},
+						title: {type: "string"},
+						description: {type: ["string", "null"]},
+						photo: {type: ["string", "null"]},
+						userId: {type: "number"},
+					},
+				},
+				lotExpireDate: {type: "string"},
+				lotFinishDate: {type: ["string", "null"]},
+				createdAt: {type: "string"},
+				totalPrice: {type: "number"},
+				status: {type: "string"},
+			},
+		},
+	},
+};
+
 const postAuctionSchema: FastifySchema = {
 	body: {
 		type: "object",
@@ -9,42 +35,7 @@ const postAuctionSchema: FastifySchema = {
 			pricePerTicket: {type: "number"},
 			totalTickets: {type: "number"},
 		},
-		response: {
-			"2xx": {
-				type: "object",
-				properties: {
-					id: {type: "number"},
-					createdAt: {type: "string"},
-					lotFinishDate: {type: ["string", "null"]},
-					lotExpireDate: {type: "string"},
-					pricePerTicket: {type: "number"},
-					totalTickets: {type: "number"},
-					totalPrice: {type: "number"},
-					productId: {type: "number"},
-					product: {
-						type: "object",
-						properties: {
-							id: {type: "number"},
-							title: {type: "string"},
-							description: {type: ["string", "null"]},
-							photo: {type: ["string", "null"]},
-							userId: {type: "number"},
-						},
-					},
-					tickets: {
-						type: "array",
-						items: {
-							type: "object",
-							properties: {
-								id: {type: "number"},
-								ticketNumber: {type: "number"},
-								userId: {type: ["number", "null"]},
-							},
-						},
-					},
-				},
-			},
-		},
+		...shortAuctionSchema,
 	},
 };
 
@@ -109,12 +100,6 @@ const getAllAuctionsSchema = {
 						type: "object",
 						properties: {
 							id: {type: "number"},
-							createdAt: {type: "string"},
-							lotFinishDate: {type: ["string", "null"]},
-							lotExpireDate: {type: "string"},
-							totalPrice: {type: "string"},
-							pricePerTicket: {type: "number"},
-							totalTickets: {type: "number"},
 							product: {
 								type: "object",
 								properties: {
@@ -125,18 +110,11 @@ const getAllAuctionsSchema = {
 									userId: {type: "number"},
 								},
 							},
-							winnerId: {type: ["number", "null"]},
-							tickets: {
-								type: "array",
-								items: {
-									type: "object",
-									properties: {
-										id: {type: "number"},
-										ticketNumber: {type: "number"},
-										userId: {type: ["number", "null"]},
-									},
-								},
-							},
+							lotExpireDate: {type: "string"},
+							lotFinishDate: {type: ["string", "null"]},
+							createdAt: {type: "string"},
+							totalPrice: {type: "number"},
+							status: {type: "string"},
 						},
 					},
 				},
@@ -146,4 +124,9 @@ const getAllAuctionsSchema = {
 };
 
 
-export { postAuctionSchema, getAuctionSchema, getAllAuctionsSchema };
+export {
+	postAuctionSchema,
+	getAuctionSchema,
+	getAllAuctionsSchema,
+	shortAuctionSchema,
+};

@@ -156,15 +156,6 @@ const getUserAuctionsSchema: FastifySchema = {
 					type: "object",
 					properties: {
 						id: {type: "number"},
-						status: {type: "string"},
-						createdAt: {type: "string"},
-						updatedAt: {type: "string"},
-						lotFinishDate: {type: ["string", "null"]},
-						lotExpireDate: {type: "string"},
-						pricePerTicket: {type: "number"},
-						totalTickets: {type: "number"},
-						totalPrice: {type: "number"},
-						winnerId: {type: ["number", "null"]},
 						product: {
 							type: "object",
 							properties: {
@@ -172,19 +163,14 @@ const getUserAuctionsSchema: FastifySchema = {
 								title: {type: "string"},
 								description: {type: ["string", "null"]},
 								photo: {type: ["string", "null"]},
+								userId: {type: "number"},
 							},
 						},
-						tickets: {
-							type: "array",
-							items: {
-								type: "object",
-								properties: {
-									id: {type: "number"},
-									ticketNumber: {type: "number"},
-									userId: {type: ["number", "null"]},
-								},
-							},
-						},
+						lotExpireDate: {type: "string"},
+						lotFinishDate: {type: ["string", "null"]},
+						createdAt: {type: "string"},
+						totalPrice: {type: "number"},
+						status: {type: "string"},
 					},
 				},
 			},
