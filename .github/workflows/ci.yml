@@ -14,6 +14,15 @@ jobs:
       - name: Install NPM packages
         run: npm install
 
+      - name: Cache node modules
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-build-
+            ${{ runner.OS }}-
+
       - name: Run eslint check
         run: npm run eslint
 
