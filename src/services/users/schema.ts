@@ -25,46 +25,6 @@ const generalUserSchema: FastifySchema = {
 					name: {type: ["string", "null"]},
 				},
 			},
-			products: {
-				type: "array",
-				items: {
-					type: "object",
-					properties: {
-						id: {type: "number"},
-						title: {type: "string"},
-						description: {type: ["string", "null"]},
-						photo: {type: ["string", "null"]},
-						userId: {type: "number"},
-					},
-				},
-			},
-			auctions: {
-				type: "array",
-				items: {
-					type: "object",
-					properties: {
-						id: {type: "number"},
-						pricePerTicket: {type: "number"},
-						product: {
-							type: "object",
-							properties: {
-								id: {type: "number"},
-								title: {type: "string"},
-								description: {type: ["string", "null"]},
-								photo: {type: ["string", "null"]},
-								userId: {type: "number"},
-							},
-						},
-						totalTickets: {type: "number"},
-						totalPrice: {type: "number"},
-						createdAt: {type: "string"},
-						updatedAt: {type: "string"},
-						status: {type: "string"},
-						lotFinishDate: {type: "string"},
-						lotExpireDate: {type: "string"},
-					},
-				},
-			},
 		},
 	},
 };
