@@ -56,7 +56,6 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 			);
 		}
 		const products = await getAllUsersProducts(user.id);
-		console.log(products[0]);
 		if (!products) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.productNotFoundError, "Products not found"),

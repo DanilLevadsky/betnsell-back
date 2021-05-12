@@ -21,6 +21,16 @@ const postAuctionSchema: FastifySchema = {
 					totalTickets: {type: "number"},
 					totalPrice: {type: "number"},
 					productId: {type: "number"},
+					product: {
+						type: "object",
+						properties: {
+							id: {type: "number"},
+							title: {type: "string"},
+							description: {type: ["string", "null"]},
+							photo: {type: ["string", "null"]},
+							userId: {type: "number"},
+						},
+					},
 				},
 			},
 		},
@@ -38,6 +48,7 @@ const getAuctionSchema = {
 				lotExpireDate: {type: "string"},
 				pricePerTicket: {type: "number"},
 				totalTickets: {type: "number"},
+				totalPrice: {type: "number"},
 				product: {
 					type: "object",
 					properties: {

@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import {createTickets, generateWinnerTicket} from "../tickets/queries";
+import {getProductById} from "../products/queries";
 
 const prisma = new PrismaClient();
 
@@ -76,13 +77,17 @@ const getAuctionByPage = async function (perPage: number, page: number) {
 };
 
 const getAllUsersAuctions = async function(userId: number) {
-	return await prisma.auction.findMany({
+	const auctions = await prisma.auction.findMany({
 		where: {
 			product: {
 				userId: userId,
 			},
 		},
 	});
+	for (let i = 0; i < auctions.length; i++) {
+		auctions[i] = {...auctions[i], product: await getProductById(auctions[i].productId)};
+	}
+	return auctions;
 };
 
 const getAuctionsByUser = async function (userId: number, perPage: number, page: number) {
