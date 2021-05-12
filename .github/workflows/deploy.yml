@@ -1,0 +1,35 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - master
+      - deployment
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@master
+
+      - name: Cache node modules
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-build-
+            ${{ runner.OS }}-
+
+      - name: Install NPM packages
+        run: npm install
+
+      - name: Run eslint check
+        run: npm run eslint
+
+      - name: Run production build
+        run: npm run build
+
