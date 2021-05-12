@@ -1,9 +1,11 @@
-import { PrismaClient } from "@prisma/client";
-import {createTickets, generateWinnerTicket} from "../tickets/queries";
+import { Prisma, PrismaClient, PrismaPromise } from "@prisma/client";
+import {createTickets, deleteTicketsByAuctionId, generateWinnerTicket} from "../tickets/queries";
 import {getProductById} from "../products/queries";
+import { getUserById } from "../users/queries";
 
 const prisma = new PrismaClient();
 
+// TODO: change product property isBusy to TRUE.
 const createAuction = async function (data: any) {
 	const Auction = await prisma.auction.create({
 		data: {
@@ -77,7 +79,7 @@ const getAuctionByPage = async function (perPage: number, page: number) {
 };
 
 const getAllUsersAuctions = async function(userId: number) {
-	const auctions = await prisma.auction.findMany({
+	const auctions: any = await prisma.auction.findMany({
 		where: {
 			product: {
 				userId: userId,
@@ -105,6 +107,29 @@ const getAuctionsByUser = async function (userId: number, perPage: number, page:
 	});
 };
 
+const deleteAuctionsByUser = async function (userId: number) {
+	const auctions = await prisma.auction.findMany({
+		where: {
+			product: {
+				userId: userId,
+			},
+		},
+	});
+	for (const auction of auctions) {
+		await deleteTicketsByAuctionId(auction.id);
+		await deleteAuctionById(auction.id);
+	}
+	return auctions;
+};
+
+const deleteAuctionById = async function (id: number) {
+	return await prisma.auction.delete({
+		where: {
+			id: id,
+		},
+	});
+};
+
 export {
 	createAuction,
 	getAuctionById,
@@ -114,4 +139,5 @@ export {
 	getAuctionByPage,
 	getPagesCountByUser,
 	getAllUsersAuctions,
+	deleteAuctionsByUser,
 };

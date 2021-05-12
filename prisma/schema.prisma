@@ -53,6 +53,7 @@ model Product {
   title       String
   description String?
   photo       String?
+  isBusy      Boolean  @default(false)
   // auction <-> product one-to-one relation
   auction     Auction?
   // product -> user one-to-many relation

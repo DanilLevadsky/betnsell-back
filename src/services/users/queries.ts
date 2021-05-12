@@ -122,15 +122,16 @@ const updateProfilePic = async function (id: number, profilePic: string) {
 	});
 };
 
-const addFunds = async function (id: number, sum: number) {
-	const user = await getUserById(id);
+// TODO: VERY LATELY upgrade to GameMoney.
+const addFunds = async function (userId: number, sum: number) {
+	const user = await getUserById(userId);
 	if (user) {
 		return await prisma.user.update({
 			data: {
 				balance: user.balance + sum,
 			},
 			where: {
-				id: id,
+				id: userId,
 			},
 		});
 	}
