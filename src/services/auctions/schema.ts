@@ -81,7 +81,7 @@ const getAllAuctionsSchema = {
 				pageSize: {type: "number"},
 				currentPage: {type: "number"},
 				totalPages: {type: "number"},
-				auctions: {
+				content: {
 					type: "array",
 					items: {
 						type: "object",

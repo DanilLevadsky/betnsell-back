@@ -81,7 +81,7 @@ const auctions: FastifyPluginCallback = async function (
 			pageSize: perPage,
 			currentPage: page,
 			totalPages: totalPages,
-			auctions: auctions,
+			content: auctions,
 		});
 	}); 
 };

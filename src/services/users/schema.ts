@@ -127,7 +127,7 @@ const getUserProductsSchema: FastifySchema = {
 			pageSize: {type: "number"},
 			totalPages: {type: "number"},
 			currentPage: {type: "number"},
-			products: {
+			content: {
 				type: "array",
 				items: {
 					type: "object",
@@ -150,7 +150,7 @@ const getUserAuctionsSchema: FastifySchema = {
 			pageSize: {type: "number"},
 			totalPages: {type: "number"},
 			currentPage: {type: "number"},
-			auctions: {
+			content: {
 				type: "array",
 				items: {
 					type: "object",

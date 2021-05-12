@@ -219,11 +219,10 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 			);
 		}
 		return res.status(200).send({
-			userId: user.id,
 			pageSize: perPage,
 			products: products,
 			totalPages: totalPages,
-			currentPage: page,
+			content: page,
 		});
 	});
 
@@ -249,11 +248,10 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 			};
 		}
 		return res.status(200).send({
-			userId: userId,
 			pageSize: perPage,
 			currentPage: page,
 			totalPages: totalPages,
-			auctions: auctions,
+			content: auctions,
 		});
 	});
 
