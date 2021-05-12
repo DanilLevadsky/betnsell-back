@@ -31,6 +31,17 @@ const postAuctionSchema: FastifySchema = {
 							userId: {type: "number"},
 						},
 					},
+					tickets: {
+						type: "array",
+						items: {
+							type: "object",
+							properties: {
+								id: {type: "number"},
+								ticketNumber: {type: "number"},
+								userId: {type: ["number", "null"]},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -60,6 +71,17 @@ const getAuctionSchema = {
 					},
 				},
 				winnerId: {type: ["number", "null"]},
+				tickets: {
+					type: "array",
+					items: {
+						type: "object",
+						properties: {
+							id: {type: "number"},
+							ticketNumber: {type: "number"},
+							userId: {type: ["number", "null"]},
+						},
+					},
+				},
 			},
 		},
 	},
@@ -90,6 +112,7 @@ const getAllAuctionsSchema = {
 							createdAt: {type: "string"},
 							lotFinishDate: {type: ["string", "null"]},
 							lotExpireDate: {type: "string"},
+							totalPrice: {type: "string"},
 							pricePerTicket: {type: "number"},
 							totalTickets: {type: "number"},
 							product: {
@@ -103,6 +126,17 @@ const getAllAuctionsSchema = {
 								},
 							},
 							winnerId: {type: ["number", "null"]},
+							tickets: {
+								type: "array",
+								items: {
+									type: "object",
+									properties: {
+										id: {type: "number"},
+										ticketNumber: {type: "number"},
+										userId: {type: ["number", "null"]},
+									},
+								},
+							},
 						},
 					},
 				},

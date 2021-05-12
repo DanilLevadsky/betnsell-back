@@ -34,6 +34,7 @@ import {
 	getPagesCountByUser,
 } from "../auctions/queries";
 import isAuth from "../../hooks/isAuth";
+import {getTickets} from "../tickets/queries";
 
 
 const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
@@ -245,6 +246,7 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 			auctions[i] = {
 				...auctions[i],
 				product: await getProductById(auctions[i].productId),
+				tickets: await getTickets(auctions[i].id),
 			};
 		}
 		return res.status(200).send({

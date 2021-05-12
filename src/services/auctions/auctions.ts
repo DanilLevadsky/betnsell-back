@@ -15,18 +15,23 @@ import {
 	postAuctionSchema,
 } from "./schema";
 import {getProductById} from "../products/queries";
+import {getTickets} from "../tickets/queries";
 
 const auctions: FastifyPluginCallback = async function (
 	fastify: FastifyInstance,
 ) {
 	fastify.put("/create", { schema: postAuctionSchema }, async (req: any, res: any) => {
-		const auction = await createAuction(req.body);
+		let auction = await createAuction(req.body);
 		if (!auction) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.invalidAuctionDataError, "Cannot create auction"),
 			);
 		}
-
+		auction = {
+			...auction,
+			product: await getProductById(auction.productId),
+			tickets: await getTickets(auction.id),
+		};
 		return res.status(201).send(auction);
 	});
 
@@ -43,7 +48,8 @@ const auctions: FastifyPluginCallback = async function (
 				new RequestError(400, ErrorTypes.productNotFoundError, "Cannot find this product"),
 			);
 		}
-		return res.status(200).send({...auction, product: product});
+		const tickets = await getTickets(auction.id);
+		return res.status(200).send({...auction, product: product, tickets: tickets});
 	});
 
 
@@ -60,7 +66,8 @@ const auctions: FastifyPluginCallback = async function (
 				new RequestError(400, ErrorTypes.productNotFoundError, "Cannot find this product"),
 			);
 		}
-		return res.status(200).send({...auction, product: product});
+		const tickets = await getTickets(auction.id);
+		return res.status(200).send({...auction, product: product, tickets: tickets});
 	});
 
 	fastify.get("/", { schema: getAllAuctionsSchema }, async (req: any, res: any) => {
@@ -75,6 +82,7 @@ const auctions: FastifyPluginCallback = async function (
 			auctions[i] = {
 				...auctions[i],
 				product: await getProductById(auctions[i].productId),
+				tickets: await getTickets(auctions[i].id),
 			};
 		}
 		return res.status(200).send({

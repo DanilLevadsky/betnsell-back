@@ -20,7 +20,7 @@ const tickets: FastifyPluginCallback = async function (fastify: FastifyInstance)
 		const purchased = [];
 		for (const number of ticketNumbers) {
 			try {
-				const ticket = await purchaseTicket(auctionId, number, auction.pricePerTicket, userId);
+				const ticket = await purchaseTicket(auctionId, number, userId);
 				if (ticket instanceof RequestError) {
 					throw new Error;
 				}

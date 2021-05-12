@@ -1,8 +1,8 @@
 import {PrismaClient} from "@prisma/client";
 import {getAuctionById} from "../auctions/queries";
 import {getUserById} from "../users/queries";
-import { RequestError } from "../../utils/error";
-import { ErrorTypes } from "../../constants/errorConstants";
+import {RequestError} from "../../utils/error";
+import {ErrorTypes} from "../../constants/errorConstants";
 
 const prisma = new PrismaClient();
 
@@ -39,7 +39,6 @@ const generateWinnerTicket = async function(auctionId: number) {
 const purchaseTicket = async function(
 	auctionId: number,
 	ticketNumber: number,
-	pricePerTicket: number,
 	userId: number,
 ) {
 	let ticket = await prisma.ticket.findFirst({
@@ -50,34 +49,47 @@ const purchaseTicket = async function(
 	});
 	const auction = await getAuctionById(auctionId);
 	const user: any = await getUserById(userId);
-	if (ticket && user.id !== auction.userId) {
-		if (ticket.userId) {
-			return new RequestError(400, ErrorTypes.auctionSubscriptionError, "Ticket already taken");
-		}
-		if (user.balance > auction.pricePerTicket) {
-			await prisma.user.update({
-				data: {
-					balance: user.balance - auction.pricePerTicket,
-				}, where: {
-					id: userId,
-				},
-			});
-			ticket = await prisma.ticket.update({
-				data: {
-					userId: userId,
-				},
-				where: {
-					id: ticket.id,
-				},
-			});
-			return ticket;
-		}
+	if (userId === auction.userId) {
+		return new RequestError(400, ErrorTypes.auctionSubscriptionError, "You cannot subscribe on your own auction");
+	}
+	if (auction.status !== "STARTED") {
+		return new RequestError(400, ErrorTypes.auctionSubscriptionError, "Auction already finished");
+	}
+	if (ticket.userId) {
+		return new RequestError(400, ErrorTypes.auctionSubscriptionError, "Ticket already taken");
+	}
+	if (user.balance > auction.pricePerTicket) {
+		await prisma.user.update({
+			data: {
+				balance: user.balance - auction.pricePerTicket,
+			}, where: {
+				id: userId,
+			},
+		});
+		ticket = await prisma.ticket.update({
+			data: {
+				userId: userId,
+			},
+			where: {
+				id: ticket.id,
+			},
+		});
+		return ticket;
 	}
 	return new RequestError(400, ErrorTypes.auctionSubscriptionError, "cannot purchase ticket");
+};
+
+const getTickets = async function(auctionId: number) {
+	return await prisma.ticket.findMany({
+		where: {
+			auctionId: auctionId,
+		},
+	});
 };
 
 export {
 	createTickets,
 	generateWinnerTicket,
 	purchaseTicket,
+	getTickets,
 };

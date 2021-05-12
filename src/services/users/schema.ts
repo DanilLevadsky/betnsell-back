@@ -174,6 +174,17 @@ const getUserAuctionsSchema: FastifySchema = {
 								photo: {type: ["string", "null"]},
 							},
 						},
+						tickets: {
+							type: "array",
+							items: {
+								type: "object",
+								properties: {
+									id: {type: "number"},
+									ticketNumber: {type: "number"},
+									userId: {type: ["number", "null"]},
+								},
+							},
+						},
 					},
 				},
 			},
