@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { deleteAuctionsByUser } from "../auctions/queries";
 
 const prisma = new PrismaClient();
 
@@ -76,19 +77,22 @@ const updatePhoto = async function(id: number, photo: any) {
 	});
 };
 
-const deleteProduct = async function(id: number) {
+const deleteProductById = async function(id: number) {
 	const product = await getProductById(id);
 	if (product) {
-		return await prisma.product.delete({
-			where: {
-				id: product.id,
-			},
-		});
+		if (!product.isBusy) {
+			return await prisma.product.delete({
+				where: {
+					id: product.id,
+				},
+			});
+		}
 	}
 	return null;
 };
 
 const deleteProductsByUser = async function(userId: number) {
+	await deleteAuctionsByUser(userId);
 	return await prisma.product.deleteMany({
 		where: {
 			userId: userId,
@@ -111,7 +115,7 @@ export {
 	updateTitle,
 	updateDescription,
 	updatePhoto,
-	deleteProduct,
+	deleteProductById,
 	deleteProductsByUser,
 	getProductPagesCount,
 	getAllUsersProducts,

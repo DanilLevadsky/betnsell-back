@@ -238,7 +238,7 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 			);
 		}
 		const totalPages = await getPagesCountByUser(perPage, userId);
-		const auctions = await getAuctionsByUser(userId, perPage, page);
+		const auctions: any = await getAuctionsByUser(userId, perPage, page);
 		if (!auctions) {
 			new RequestError(400, ErrorTypes.auctionNotFoundError, "Auctions not found");
 		}
