@@ -1,9 +1,6 @@
-name: pullrequest CI
+name: PR and push CI
 
-on:
-  pull_request:
-    branches:
-      - master
+on: [pull-request]
 
 jobs:
   build:
@@ -11,20 +8,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v2
       - name: Install NPM packages
         run: npm install
 
-      - name: Cache node modules
-        uses: actions/cache@v1
-        with:
-          path: node_modules
-          key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-build-
-            ${{ runner.OS }}-
-
       - name: Run eslint check
         run: npm run eslint
+
+      - name: run tests
+        run: npm run test
 
       - name: Run production build
         run: npm run build

@@ -1,10 +1,6 @@
 name: deploy
 
-on:
-  push:
-    branches:
-      - master
-      - deployment
+on: [push]
 
 jobs:
   deploy:
@@ -12,11 +8,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 15
+
       - name: Install NPM packages
         run: npm install
 
       - name: Run eslint check
         run: npm run eslint
+
+      - name: run tests
+        run: npm run test
 
       - name: Run production build
         run: npm run build
