@@ -42,12 +42,14 @@
       "prettier": "^2.2.1",
       "prisma": "^2.22.1",
       "rimraf": "^3.0.2",
-      "ts-node": "3.3.0",
+      "ts-node": "^3.3.0",
       "typescript": "3.3.3333"
    },
    "dependencies": {
+      "@types/tap": "^15.0.1",
       "pg": "^8.5.1",
       "reflect-metadata": "^0.1.10",
+      "tap": "^15.0.9",
       "typeorm": "0.2.32"
    }
 }

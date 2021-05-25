@@ -7,6 +7,7 @@ const loginByEmail: FastifySchema = {
 		properties: {
 			password: {
 				type: "string",
+				minLength: 8,
 			},
 			email: {
 				type: "string",
@@ -71,8 +72,8 @@ const signUpPost: FastifySchema = {
 		type: "object",
 		required: ["username", "password", "email"],
 		properties: {
-			password: { type: "string" },
-			username: { type: "string" },
+			password: { type: "string", minLength: 8 },
+			username: { type: "string", minLength: 8 },
 			email: { type: "string" },
 		},
 	},

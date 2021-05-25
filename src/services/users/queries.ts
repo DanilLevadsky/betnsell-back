@@ -151,6 +151,19 @@ const deleteUser = async function(id: number) {
 	return null;
 };
 
+// Only for tests
+const deleteUserByUsername = async function(username: string) {
+	const user = await getUserByUsername(username);
+	if (user) {
+		await deleteProductsByUser(user.id);
+		return await prisma.user.delete({
+			where: {
+				id: user.id,
+			},
+		});
+	}
+};
+
 export {
 	getUserByEmail,
 	getUserByUsername,
@@ -165,4 +178,5 @@ export {
 	updatePassword,
 	updateProfilePic,
 	addFunds,
+	deleteUserByUsername,
 };
