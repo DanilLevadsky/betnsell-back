@@ -1,10 +1,8 @@
 import tap from "tap";
 import { server } from "../server";
-import {deleteUserByUsername} from "../services/users/queries";
 
 const endAuthTest = async () => {
 	await server.close();
-	await deleteUserByUsername("testuser");
 	process.exit(0);
 };
 
@@ -103,7 +101,37 @@ const testAuth = () => tap.test("Testing authentication", async t => {
 		t.equal(response.statusCode, 401, "Unauthorized");
 	});
 
+	await t.test("Testing updating userInfo", async t => {
+		const response = await server.inject({
+			url: "/users/update/username",
+			method: "PATCH",
+			headers: {
+				authorization: `BEARER ${token}`,
+			},
+			payload: {
+				username: "newtestuser",
+			},
+		});
+		const payload = JSON.parse(response.payload);
+		t.equal(response.statusCode, 200, "Successful");
+		t.not(payload.username, userInfo.username, "New username different from previous");
+		t.equal(payload.email, userInfo.email, "Changed only username");
+		t.equal(payload.mobile, null);
+		userInfo.username = "newtestuser";
+	});
+
+	await t.test("Testing user deleting", async t => {
+		const response = await server.inject({
+			url: "/users/delete",
+			method: "DELETE",
+			headers: {
+				authorization: `BEARER ${token}`,
+			},
+		});
+		t.equal(response.statusCode, 204, "Successfully deleted");
+	});
+
 	t.end();
 });
 
-testAuth();
+testAuth().catch(console.error);
