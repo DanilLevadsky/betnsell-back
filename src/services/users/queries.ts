@@ -141,10 +141,10 @@ const addFunds = async function (userId: number, sum: number) {
 const deleteUser = async function(id: number) {
 	const user = await getUserById(id);
 	if (user) {
-		await deleteProductsByUser(user.id);
+		await deleteProductsByUser(id);
 		return await prisma.user.delete({
 			where: {
-				id: user.id,
+				id: id,
 			},
 		});
 	}

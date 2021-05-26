@@ -6,3 +6,5 @@ dist/
 .DS_Store
 config/
 prisma/migrations
+./nyc_output
+./coverage

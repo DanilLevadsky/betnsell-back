@@ -259,7 +259,6 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 
 	fastify.delete("/delete", {preValidation: isAuth}, async (req: any, res: any) => {
 		const userId = req.requestContext.get("userId").id;
-		await deleteProductsByUser(userId);
 		const deletedUser = await deleteUser(userId);
 		if (!deletedUser) {
 			return res.status(400).send(

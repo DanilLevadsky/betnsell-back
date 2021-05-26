@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Product } from "@prisma/client";
 import {createTickets, deleteTicketsByAuctionId, generateWinnerTicket} from "../tickets/queries";
 import {getProductById} from "../products/queries";
 
@@ -11,7 +11,7 @@ const createAuction = async function (data: any) {
 			totalPrice: data.totalTickets * data.pricePerTicket,
 		},
 	});
-	const product = await prisma.product.findFirst({
+	const product: any = await prisma.product.findFirst({
 		where: {
 			id: Auction.productId,
 		},

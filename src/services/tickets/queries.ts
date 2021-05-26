@@ -129,7 +129,9 @@ const deleteTicketsByAuctionId = async function(auctionId: number) {
 		},
 	});
 	for (const ticket of tickets) {
-		await addFunds(ticket.userId, auction.pricePerTicket);
+		if (ticket.userId) {
+			await addFunds(ticket.userId, auction.pricePerTicket);
+		}
 	}
 	return await prisma.ticket.deleteMany({
 		where: {
