@@ -11,7 +11,7 @@ import {
 } from "./queries";
 import {FastifyInstance, FastifyPluginCallback} from "fastify";
 import {
-	generalUserSchema,
+	generalUserSchema, getUserAuctionsSchema, getUserProductsSchema,
 	shortUserSchema,
 	updateBalanceSchema,
 	updateEmailSchema,
@@ -23,9 +23,8 @@ import {
 } from "./schema";
 import {RequestError} from "../../utils/error";
 import {ErrorTypes} from "../../constants/errorConstants";
-import jwt from "jsonwebtoken";
 import {
-	deleteProductsByUser, getAllUsersProducts,
+	deleteProductsByUser, getAllUsersProducts, getProductById,
 	getProductPagesCount,
 	getProductsByUser,
 } from "../products/queries";
@@ -34,6 +33,8 @@ import {
 	getAuctionsByUser,
 	getPagesCountByUser,
 } from "../auctions/queries";
+import isAuth from "../../hooks/isAuth";
+import {getTickets} from "../tickets/queries";
 
 
 const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
@@ -47,15 +48,9 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 		return res.status(200).send(user);
 	});
 
-	fastify.get("/", {schema: generalUserSchema}, async (req:any, res:any) => {
-		const token = req.headers.authorization.split(" ")[1];
-		const data: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
-		if (!data) {
-			return res.status(401).send(
-				new RequestError(401, ErrorTypes.unauthorizedError, "Unauthorized"),
-			);
-		}
-		const user = await getUserById(data.id);
+	fastify.get("/", {schema: generalUserSchema, preValidation: isAuth}, async (req:any, res:any) => {
+		const userId = req.requestContext.get("userId").id;
+		const user = await getUserById(userId);
 		if (!user) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
@@ -87,15 +82,9 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 		});
 	});
 
-	fastify.patch("/update/username", {schema: updateUsernameSchema}, async (req: any, res: any) => {
-		const token = req.headers.authorization.split(" ")[1];
-		const data: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
-		if (!data) {
-			return res.status(401).send(
-				new RequestError(401, ErrorTypes.unauthorizedError, "Unauthorized"),
-			);
-		}
-		const user = await getUserById(data.id);
+	fastify.patch("/update/username", {schema: updateUsernameSchema, preValidation: isAuth}, async (req: any, res: any) => {
+		const userId = req.requestContext.get("userId").id;
+		const user = await getUserById(userId);
 		if (!user) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
@@ -110,15 +99,9 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 		return res.status(200).send(updated);
 	});
 
-	fastify.patch("/update/email", {schema: updateEmailSchema}, async (req: any, res: any) => {
-	 const token = req.headers.authorization.split(" ")[1];
-	 const data: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
-	 if (!data) {
-		 return res.status(401).send(
-			 new RequestError(401, ErrorTypes.unauthorizedError, "Unauthorized"),
-		 );
-	 }
-	 const user = await getUserById(data.id);
+	fastify.patch("/update/email", {schema: updateEmailSchema, preValidation: isAuth}, async (req: any, res: any) => {
+	 const userId = req.requestContext.get("userId").id;
+	 const user = await getUserById(userId);
 	 if (!user) {
 		 return res.status(400).send(
 			 new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
@@ -134,15 +117,9 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
  	});
 
 
-	fastify.patch("/update/password", {schema: updatePasswordSchema}, async (req: any, res: any) => {
-		const token = req.headers.authorization.split(" ")[1];
-		const data: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
-		if (!data) {
-			return res.status(401).send(
-				new RequestError(401, ErrorTypes.unauthorizedError, "Unauthorized"),
-			);
-		}
-		const user = await getUserById(data.id);
+	fastify.patch("/update/password", {schema: updatePasswordSchema, preValidation: isAuth}, async (req: any, res: any) => {
+		const userId = req.requestContext.get("userId").id;
+		const user = await getUserById(userId);
 		if (!user) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
@@ -157,15 +134,9 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 		return res.status(200).send(updated);
 	});
 
-	fastify.patch("/update/name", {schema: updateNameSchema}, async (req: any, res: any) => {
-		const token = req.headers.authorization.split(" ")[1];
-		const data: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
-		if (!data) {
-			return res.status(401).send(
-				new RequestError(401, ErrorTypes.unauthorizedError, "Unauthorized"),
-			);
-		}
-		const user = await getUserById(data.id);
+	fastify.patch("/update/name", {schema: updateNameSchema, preValidation: isAuth}, async (req: any, res: any) => {
+		const userId = req.requestContext.get("userId").id;
+		const user = await getUserById(userId);
 		if (!user) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
@@ -180,15 +151,9 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 		return res.status(200).send(updated);
 	});
 
-	fastify.patch("/update/mobile", {schema: updateMobileSchema}, async (req: any, res: any) => {
-		const token = req.headers.authorization.split(" ")[1];
-		const data: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
-		if (!data) {
-			return res.status(401).send(
-				new RequestError(401, ErrorTypes.unauthorizedError, "Unauthorized"),
-			);
-		}
-		const user = await getUserById(data.id);
+	fastify.patch("/update/mobile", {schema: updateMobileSchema, preValidation: isAuth}, async (req: any, res: any) => {
+		const userId = req.requestContext.get("userId").id;
+		const user = await getUserById(userId);
 		if (!user) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
@@ -203,15 +168,9 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 		return res.status(200).send(updated);
 	});
 
-	fastify.patch("/update/profilePic", {schema: updateProfilePicSchema}, async (req: any, res: any) => {
-		const token = req.headers.authorization.split(" ")[1];
-		const data: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
-		if (!data) {
-			return res.status(401).send(
-				new RequestError(401, ErrorTypes.unauthorizedError, "Unauthorized"),
-			);
-		}
-		const user = await getUserById(data.id);
+	fastify.patch("/update/profilePic", {schema: updateProfilePicSchema, preValidation: isAuth}, async (req: any, res: any) => {
+		const userId = req.requestContext.get("userId").id;
+		const user = await getUserById(userId);
 		if (!user) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
@@ -226,15 +185,9 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 		return res.status(200).send(updated);
 	});
 
-	fastify.patch("/update/balance", {schema: updateBalanceSchema}, async (req: any, res: any) => {
-		const token = req.headers.authorization.split(" ")[1];
-		const data: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
-		if (!data) {
-			return res.status(401).send(
-				new RequestError(401, ErrorTypes.unauthorizedError, "Unauthorized"),
-			);
-		}
-		const user = await getUserById(data.id);
+	fastify.patch("/update/balance", {schema: updateBalanceSchema, preValidation: isAuth}, async (req: any, res: any) => {
+		const userId = req.requestContext.get("userId").id;
+		const user = await getUserById(userId);
 		if (!user) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
@@ -249,7 +202,7 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 		return res.status(200).send(updated);
 	});
 
-	fastify.get("/:userId/products", {}, async (req:any, res:any) => {
+	fastify.get("/:userId/products", {schema: getUserProductsSchema}, async (req:any, res:any) => {
 		const perPage = parseInt(req.query.perPage) || 10;
 		const page = parseInt(req.query.page) || 1;
 
@@ -267,42 +220,46 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 			);
 		}
 		return res.status(200).send({
-			userId: user.id,
+			pageSize: perPage,
 			products: products,
 			totalPages: totalPages,
-			currentPage: page,
+			content: products,
 		});
 	});
 
-	fastify.get("/:userId/auctions", {}, async (req:any, res:any)=> {
+	fastify.get("/:userId/auctions", {schema: getUserAuctionsSchema}, async (req:any, res:any)=> {
 		const perPage = parseInt(req.query.perPage) || 10;
 		const page = parseInt(req.query.page) || 1;
-
-		const user = await getUserById(parseInt(req.params.userId));
+		const userId = parseInt(req.params.userId);
+		const user = await getUserById(userId);
 		if (!user) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
 			);
 		}
-		const totalPages = await getPagesCountByUser(perPage, user.id);
-		const auctions = await getAuctionsByUser(user.id, perPage, page);
+		const totalPages = await getPagesCountByUser(perPage, userId);
+		const auctions: any = await getAuctionsByUser(userId, perPage, page);
 		if (!auctions) {
 			new RequestError(400, ErrorTypes.auctionNotFoundError, "Auctions not found");
 		}
-		return res.status(200).send({auctions: auctions, totalPages: totalPages, currentPage: page});
+		for (let i = 0; i < auctions.length; i++) {
+			auctions[i] = {
+				...auctions[i],
+				product: await getProductById(auctions[i].productId),
+				tickets: await getTickets(auctions[i].id),
+			};
+		}
+		return res.status(200).send({
+			pageSize: perPage,
+			currentPage: page,
+			totalPages: totalPages,
+			content: auctions,
+		});
 	});
 
-	fastify.delete("/delete", async (req: any, res: any) => {
-		const token = req.headers.authorization.split(" ")[1];
-		const data: any = jwt.verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
-		if (!data) {
-			return res.status(401).send(
-				new RequestError(401, ErrorTypes.unauthorizedError, "Unauthorized"),
-			);
-		}
-		const id = data.id;
-		await deleteProductsByUser(id);
-		const deletedUser = await deleteUser(parseInt(data.id));
+	fastify.delete("/delete", {preValidation: isAuth}, async (req: any, res: any) => {
+		const userId = req.requestContext.get("userId").id;
+		const deletedUser = await deleteUser(userId);
 		if (!deletedUser) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "Cannot delete user"),

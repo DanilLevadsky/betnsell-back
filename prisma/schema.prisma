@@ -20,7 +20,9 @@ model User {
   Product    Product[]
   // user <- auction one-to-many relation
   Auction    Auction[] @relation("winner")
+  // auction <-> user many-to-many relation
   Auctions   Auction[] @relation("participants")
+  // user <- ticket one-to-many relation
   Ticket     Ticket[]
 }
 
@@ -30,19 +32,20 @@ model Auction {
   status         Status    @default(STARTED)
   updatedAt      DateTime  @updatedAt @map("updated_at")
   lotFinishDate  DateTime? @map("lot_finish_date")
-  // TODO: lotExpireDate = createdAt + 2 weeks
   lotExpireDate  DateTime? @map("lot_expire_date")
   pricePerTicket Int       @map("price_per_ticket")
   totalTickets   Int       @map("total_tickets")
+  totalPrice     Int       @map("total_price")
   // auction <-> product one-to-one relation
   product        Product   @relation(fields: [productId], references: [id])
-  productId      Int
+  productId      Int       @unique
   // auction -> user one-to-many relation
   Winner         User?     @relation("winner", fields: [winnerId], references: [id])
   winnerId       Int?      @map("winner")
+  // auction <-> user many-to-many relation
   Participants   User[]    @relation("participants")
   // auction <- ticket one-to-many relation
-  //tickets       Ticket[]
+  tickets        Ticket[]
 }
 
 model Product {
@@ -50,6 +53,7 @@ model Product {
   title       String
   description String?
   photo       String?
+  isBusy      Boolean  @default(false)
   // auction <-> product one-to-one relation
   auction     Auction?
   // product -> user one-to-many relation
@@ -58,12 +62,16 @@ model Product {
 }
 
 model Ticket {
-  id        Int     @id @default(autoincrement())
-  isWinning Boolean @default(false)
-  //  Auction    Auction   @relation(fields: [auctionId], references: [id])
-  auctionId Int
-  user      User?   @relation(fields: [userId], references: [id])
-  userId    Int?    @map("owner")
+  id           Int     @id @default(autoincrement())
+  isWinning    Boolean @default(false)
+  ticketNumber Int
+  Auction      Auction @relation(fields: [auctionId], references: [id])
+  auctionId    Int
+  // user <- ticket one-to-many relation
+  user         User?   @relation(fields: [userId], references: [id])
+  userId       Int?    @map("owner")
+
+  @@unique([auctionId, ticketNumber])
 }
 
 // Status table resembles to current condition of auction

@@ -1,5 +1,31 @@
 import { FastifySchema } from "fastify";
 
+const generalProductSchema = {
+	response: {
+		"2xx": {
+			id: {type: "number"},
+			title: {type: "string"},
+			description: {type: ["string", "null"]},
+			photo: {type: ["string", "null"]},
+			userId: {type: "number"},
+			auction: {
+				type: ["object", "null"],
+				properties: {
+					id: {type: "number"},
+					updatedAt: {type: "string"},
+					createdAt: {type: "string"},
+					lotFinishDate: {type: ["string", "null"]},
+					lotExpireDate: {type: "string"},
+ 					pricePerTicket: {type: "number"},
+					totalTickets: {type: "number"},
+					totalPrice: {type: "number"},
+					winnerId: {type: ["number", "null"]},
+				},
+			},			
+		},
+	},
+};
+
 const postProductSchema: FastifySchema = {
 	body: {
 		type: "object",
@@ -57,6 +83,7 @@ const updatePhotoSchema = {
 	...getProductSchema,
 };
 export {
+	generalProductSchema,
 	postProductSchema,
 	getProductSchema,
 	updateDescriptionSchema,

@@ -25,34 +25,6 @@ const generalUserSchema: FastifySchema = {
 					name: {type: ["string", "null"]},
 				},
 			},
-			products: {
-				type: "array",
-				items: {
-					type: "object",
-					properties: {
-						id: {type: "number"},
-						title: {type: "string"},
-						description: {type: ["string", "null"]},
-						photo: {type: ["string", "null"]},
-						userId: {type: "number"},
-						price: {type: "number"},
-					},
-				},
-			},
-			auctions: {
-				type: "array",
-				items: {
-					type: "object",
-					properties: {
-						id: {type: "number"},
-						createdAt: {type: "string"},
-						updatedAt: {type: "string"},
-						status: {type: "string"},
-						lotFinishDate: {type: "string"},
-						lotExpireDate: {type: "string"},
-					},
-				},
-			},
 		},
 	},
 };
@@ -148,6 +120,64 @@ const updateBalanceSchema: FastifySchema = {
 	...getUserSchema,
 };
 
+const getUserProductsSchema: FastifySchema = {
+	response: {
+		"2xx": {
+			userId: {type: "number"},
+			pageSize: {type: "number"},
+			totalPages: {type: "number"},
+			currentPage: {type: "number"},
+			content: {
+				type: "array",
+				items: {
+					type: "object",
+					properties: {
+						id: {type: "number"},
+						title: {type: "string"},
+						description: {type: ["string", "null"]},
+						photo: {type: ["string", "null"]},
+					},
+				},
+			},
+		},
+	},
+};
+
+const getUserAuctionsSchema: FastifySchema = {
+	response: {
+		"2xx": {
+			userId: {type: "number"},
+			pageSize: {type: "number"},
+			totalPages: {type: "number"},
+			currentPage: {type: "number"},
+			content: {
+				type: "array",
+				items: {
+					type: "object",
+					properties: {
+						id: {type: "number"},
+						product: {
+							type: "object",
+							properties: {
+								id: {type: "number"},
+								title: {type: "string"},
+								description: {type: ["string", "null"]},
+								photo: {type: ["string", "null"]},
+								userId: {type: "number"},
+							},
+						},
+						lotExpireDate: {type: "string"},
+						lotFinishDate: {type: ["string", "null"]},
+						createdAt: {type: "string"},
+						totalPrice: {type: "number"},
+						status: {type: "string"},
+					},
+				},
+			},
+		},
+	},
+};
+
 
 export {
 	getUserSchema,
@@ -160,5 +190,7 @@ export {
 	updateBalanceSchema,
 	shortUserSchema,
 	generalUserSchema,
+	getUserProductsSchema,
+	getUserAuctionsSchema,
 };
 

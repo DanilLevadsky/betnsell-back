@@ -5,4 +5,6 @@ build/
 dist/
 .DS_Store
 config/
-migrations/
+prisma/migrations
+./.nyc_output
+./coverage

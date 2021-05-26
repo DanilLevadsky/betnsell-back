@@ -49,14 +49,11 @@ const ifUserExists = async function(email: string, username: string) {
 };
 
 const getUserById = async function(id: number) {
-	const user = await prisma.user.findUnique({
+	return await prisma.user.findUnique({
 		where: {
 			id: id,
 		},
-	},
-	);
-
-	return user;
+	});
 };
 
 const updateUsername = async function (id: number, username: string) {
@@ -125,15 +122,16 @@ const updateProfilePic = async function (id: number, profilePic: string) {
 	});
 };
 
-const addFunds = async function (id: number, sum: number) {
-	const user = await getUserById(id);
+// TODO: VERY LATELY upgrade to GameMoney.
+const addFunds = async function (userId: number, sum: number) {
+	const user = await getUserById(userId);
 	if (user) {
 		return await prisma.user.update({
 			data: {
 				balance: user.balance + sum,
 			},
 			where: {
-				id: id,
+				id: userId,
 			},
 		});
 	}
@@ -143,6 +141,20 @@ const addFunds = async function (id: number, sum: number) {
 const deleteUser = async function(id: number) {
 	const user = await getUserById(id);
 	if (user) {
+		await deleteProductsByUser(id);
+		return await prisma.user.delete({
+			where: {
+				id: id,
+			},
+		});
+	}
+	return null;
+};
+
+// Only for tests
+const deleteUserByUsername = async function(username: string) {
+	const user = await getUserByUsername(username);
+	if (user) {
 		await deleteProductsByUser(user.id);
 		return await prisma.user.delete({
 			where: {
@@ -150,7 +162,6 @@ const deleteUser = async function(id: number) {
 			},
 		});
 	}
-	return null;
 };
 
 export {
@@ -167,4 +178,5 @@ export {
 	updatePassword,
 	updateProfilePic,
 	addFunds,
+	deleteUserByUsername,
 };

@@ -1,4 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Product } from "@prisma/client";
+import {createTickets, deleteTicketsByAuctionId, generateWinnerTicket} from "../tickets/queries";
+import {getProductById} from "../products/queries";
 
 const prisma = new PrismaClient();
 
@@ -6,6 +8,12 @@ const createAuction = async function (data: any) {
 	const Auction = await prisma.auction.create({
 		data: {
 			...data,
+			totalPrice: data.totalTickets * data.pricePerTicket,
+		},
+	});
+	const product: any = await prisma.product.findFirst({
+		where: {
+			id: Auction.productId,
 		},
 	});
 	await prisma.auction.update({
@@ -14,6 +22,16 @@ const createAuction = async function (data: any) {
 		},
 		where: {
 			id: Auction.id,
+		},
+	});
+	await createTickets(Auction.totalTickets, Auction.id);
+	await generateWinnerTicket(Auction.id);
+	await prisma.product.update({
+		where: {
+			id: product.id,
+		},
+		data: {
+			isBusy: true,
 		},
 	});
 	return getAuctionById(Auction.id);
@@ -28,7 +46,7 @@ const getAuctionById = async function (id: number) {
 };
 
 const getAuctionByProductId = async function (productId: number) {
-	return await prisma.auction.findFirst({
+	return await prisma.auction.findUnique({
 		where: {
 			productId: productId,
 		},
@@ -72,13 +90,17 @@ const getAuctionByPage = async function (perPage: number, page: number) {
 };
 
 const getAllUsersAuctions = async function(userId: number) {
-	return await prisma.auction.findMany({
+	const auctions: any = await prisma.auction.findMany({
 		where: {
 			product: {
 				userId: userId,
 			},
 		},
 	});
+	for (let i = 0; i < auctions.length; i++) {
+		auctions[i] = {...auctions[i], product: await getProductById(auctions[i].productId)};
+	}
+	return auctions;
 };
 
 const getAuctionsByUser = async function (userId: number, perPage: number, page: number) {
@@ -96,6 +118,29 @@ const getAuctionsByUser = async function (userId: number, perPage: number, page:
 	});
 };
 
+const deleteAuctionsByUser = async function (userId: number) {
+	const auctions = await prisma.auction.findMany({
+		where: {
+			product: {
+				userId: userId,
+			},
+		},
+	});
+	for (const auction of auctions) {
+		await deleteTicketsByAuctionId(auction.id);
+		await deleteAuctionById(auction.id);
+	}
+	return auctions;
+};
+
+const deleteAuctionById = async function (id: number) {
+	return await prisma.auction.delete({
+		where: {
+			id: id,
+		},
+	});
+};
+
 export {
 	createAuction,
 	getAuctionById,
@@ -105,4 +150,5 @@ export {
 	getAuctionByPage,
 	getPagesCountByUser,
 	getAllUsersAuctions,
+	deleteAuctionsByUser,
 };
