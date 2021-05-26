@@ -36,4 +36,5 @@ const tickets: FastifyPluginCallback = async function (fastify: FastifyInstance)
 		return res.status(200).send({status: auction.status});
 	});
 };
-export {tickets};
+
+export { tickets };

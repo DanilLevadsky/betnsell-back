@@ -9,8 +9,8 @@
       "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
       "eslint": "npx eslint './src/**'",
       "eslint:fix": "npx eslint './src/**' --fix",
-      "test": "",
-      "prepare": "npx husky install"
+      "prepare": "npx husky install",
+      "test": "npx tap --ts"
    },
    "repository": {
       "type": "git",
@@ -23,7 +23,7 @@
    },
    "homepage": "https://github.com/DanilLevadsky/betnsell-back#readme",
    "devDependencies": {
-      "@prisma/client": "^2.21.0",
+      "@prisma/client": "^2.22.1",
       "@types/bcryptjs": "^2.4.2",
       "@types/node": "^8.0.29",
       "@types/typescript": "^2.0.0",
@@ -41,14 +41,16 @@
       "fastify-request-context": "^2.1.3",
       "husky": "^5.1.3",
       "prettier": "^2.2.1",
-      "prisma": "^2.21.2",
+      "prisma": "^2.22.1",
       "rimraf": "^3.0.2",
-      "ts-node": "3.3.0",
+      "ts-node": "^3.3.0",
       "typescript": "3.3.3333"
    },
    "dependencies": {
+      "@types/tap": "^15.0.1",
       "pg": "^8.5.1",
       "reflect-metadata": "^0.1.10",
+      "tap": "^15.0.9",
       "typeorm": "0.2.32"
    }
 }

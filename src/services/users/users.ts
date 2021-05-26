@@ -238,7 +238,7 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 			);
 		}
 		const totalPages = await getPagesCountByUser(perPage, userId);
-		const auctions = await getAuctionsByUser(userId, perPage, page);
+		const auctions: any = await getAuctionsByUser(userId, perPage, page);
 		if (!auctions) {
 			new RequestError(400, ErrorTypes.auctionNotFoundError, "Auctions not found");
 		}
@@ -259,7 +259,6 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 
 	fastify.delete("/delete", {preValidation: isAuth}, async (req: any, res: any) => {
 		const userId = req.requestContext.get("userId").id;
-		await deleteProductsByUser(userId);
 		const deletedUser = await deleteUser(userId);
 		if (!deletedUser) {
 			return res.status(400).send(

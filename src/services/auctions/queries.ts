@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import {createTickets, generateWinnerTicket} from "../tickets/queries";
+import { PrismaClient, Product } from "@prisma/client";
+import {createTickets, deleteTicketsByAuctionId, generateWinnerTicket} from "../tickets/queries";
 import {getProductById} from "../products/queries";
 
 const prisma = new PrismaClient();
@@ -9,6 +9,11 @@ const createAuction = async function (data: any) {
 		data: {
 			...data,
 			totalPrice: data.totalTickets * data.pricePerTicket,
+		},
+	});
+	const product: any = await prisma.product.findFirst({
+		where: {
+			id: Auction.productId,
 		},
 	});
 	await prisma.auction.update({
@@ -21,6 +26,14 @@ const createAuction = async function (data: any) {
 	});
 	await createTickets(Auction.totalTickets, Auction.id);
 	await generateWinnerTicket(Auction.id);
+	await prisma.product.update({
+		where: {
+			id: product.id,
+		},
+		data: {
+			isBusy: true,
+		},
+	});
 	return getAuctionById(Auction.id);
 };
 
@@ -77,7 +90,7 @@ const getAuctionByPage = async function (perPage: number, page: number) {
 };
 
 const getAllUsersAuctions = async function(userId: number) {
-	const auctions = await prisma.auction.findMany({
+	const auctions: any = await prisma.auction.findMany({
 		where: {
 			product: {
 				userId: userId,
@@ -105,6 +118,29 @@ const getAuctionsByUser = async function (userId: number, perPage: number, page:
 	});
 };
 
+const deleteAuctionsByUser = async function (userId: number) {
+	const auctions = await prisma.auction.findMany({
+		where: {
+			product: {
+				userId: userId,
+			},
+		},
+	});
+	for (const auction of auctions) {
+		await deleteTicketsByAuctionId(auction.id);
+		await deleteAuctionById(auction.id);
+	}
+	return auctions;
+};
+
+const deleteAuctionById = async function (id: number) {
+	return await prisma.auction.delete({
+		where: {
+			id: id,
+		},
+	});
+};
+
 export {
 	createAuction,
 	getAuctionById,
@@ -114,4 +150,5 @@ export {
 	getAuctionByPage,
 	getPagesCountByUser,
 	getAllUsersAuctions,
+	deleteAuctionsByUser,
 };

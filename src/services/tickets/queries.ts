@@ -1,6 +1,6 @@
-import {PrismaClient} from "@prisma/client";
+import {Auction, PrismaClient, Ticket} from "@prisma/client";
 import {getAuctionById} from "../auctions/queries";
-import {getUserById} from "../users/queries";
+import {addFunds, getUserById} from "../users/queries";
 import {RequestError} from "../../utils/error";
 import {ErrorTypes} from "../../constants/errorConstants";
 
@@ -41,13 +41,13 @@ const purchaseTicket = async function(
 	ticketNumber: number,
 	userId: number,
 ) {
-	let ticket = await prisma.ticket.findFirst({
+	let ticket: any = await prisma.ticket.findFirst({
 		where: {
 			auctionId: auctionId,
 			ticketNumber: ticketNumber,
 		},
 	});
-	const auction = await getAuctionById(auctionId);
+	const auction: any = await getAuctionById(auctionId);
 	const user: any = await getUserById(userId);
 	if (userId === auction.userId) {
 		return new RequestError(400, ErrorTypes.auctionSubscriptionError, "You cannot subscribe on your own auction");
@@ -85,6 +85,9 @@ const getTickets = async function(auctionId: number) {
 		where: {
 			auctionId: auctionId,
 		},
+		orderBy: {
+			ticketNumber: "asc",
+		},
 	});
 };
 
@@ -96,7 +99,7 @@ const updateAuction = async function(auctionId: number) {
 		},
 	});
 	if (free == 0) {
-		const winner = await prisma.ticket.findFirst({
+		const winner: any = await prisma.ticket.findFirst({
 			where: {
 				auctionId: auctionId,
 				isWinning: true,
@@ -114,9 +117,33 @@ const updateAuction = async function(auctionId: number) {
 	}
 };
 
+const deleteTicketsByAuctionId = async function(auctionId: number) {
+	const tickets: any = await prisma.ticket.findMany({
+		where: {
+			auctionId: auctionId,
+		},
+	});
+	const auction: any = await prisma.auction.findUnique({
+		where: {
+			id: auctionId,
+		},
+	});
+	for (const ticket of tickets) {
+		if (ticket.userId) {
+			await addFunds(ticket.userId, auction.pricePerTicket);
+		}
+	}
+	return await prisma.ticket.deleteMany({
+		where: {
+			auctionId: auctionId,
+		},
+	});
+};
+
 export {
 	createTickets,
 	generateWinnerTicket,
 	purchaseTicket,
 	getTickets,
+	deleteTicketsByAuctionId,
 };

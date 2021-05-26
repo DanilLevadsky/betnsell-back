@@ -6,7 +6,7 @@ import {
 	updateTitle,
 	updateDescription,
 	updatePhoto,
-	deleteProduct,
+	deleteProductById,
 } from "./queries";
 import {
 	generalProductSchema,
@@ -53,11 +53,17 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 		const userId = req.requestContext.get("userId").id;
 		const productId = parseInt(req.params.id);
 		const product = await getProductById(productId);
+		const auction = await getAuctionByProductId(productId);
 		if (product!.userId !== userId) {
 			return res.status(403).send(
 				new RequestError(403, ErrorTypes.forbiddenAccessError, "You cannot update this product"),
 			);
 		}
+		if (auction) {
+			return res.status(403).send(
+				new RequestError(403, ErrorTypes.forbiddenAccessError, "You cannot update this product"),
+			);
+		};
 		const updatedProduct = await updateTitle(productId, req.body.title);
 		if (!updatedProduct) {
 			return res.status(400).send(new RequestError(400, ErrorTypes.invalidUpdateInfoError, "Cannot update product"),
@@ -114,10 +120,10 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 				new RequestError(403, ErrorTypes.forbiddenAccessError, "You cannot delete this product"),
 			);
 		}
-		const deletedProduct = await deleteProduct(productId);
+		const deletedProduct = await deleteProductById(productId);
 		if (!deletedProduct) {
-			return res.status(400).send(
-				new RequestError(400, ErrorTypes.productNotFoundError, "Product not found"),
+			return res.status(403).send(
+				new RequestError(403, ErrorTypes.forbiddenAccessError, "You cannot delete product"),
 			);
 		}
 		return res.status(204).send();

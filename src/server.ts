@@ -7,7 +7,7 @@ import { tickets } from "./services/tickets/tickets";
 import fastifyCors from "fastify-cors";
 import {fastifyRequestContextPlugin} from "fastify-request-context";
 
-const server = fastify({ logger: true });
+const server = fastify({ logger: false });
 
 server.register(fastifyRequestContextPlugin, {hook: "preValidation"});
 server.register(fastifyCors, { origin: true });
