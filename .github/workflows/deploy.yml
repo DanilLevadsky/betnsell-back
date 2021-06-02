@@ -18,12 +18,6 @@ jobs:
         with:
          node-version: 15
 
-      - name: Setup .env
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL}}
-          ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
-          HASH_SALT: ${{ secrets.HASH_SALT }}
-
       - name: Install NPM packages
         run: npm install
 
@@ -41,5 +35,11 @@ jobs:
         with:
           host: ${{ secrets.AWS_HOST }}
           username: ${{ secrets.AWS_USERNAME }}
-          scripts: sh home/ubuntu/betnsell/bet-n-sell-back/scripts/RunDeploy.sh
+          script: sh home/ubuntu/betnsell/bet-n-sell-back/scripts/RunDeploy.sh
+
+      - name: Setup .env
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL}}
+          ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+          HASH_SALT: ${{ secrets.HASH_SALT }}
 
