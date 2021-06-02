@@ -31,8 +31,9 @@ jobs:
           host: ${{ secrets.AWS_HOST }}
           username: ${{ secrets.AWS_USERNAME }}
           script: sh home/ubuntu/betnsell/bet-n-sell-back/scripts/RunDeploy.sh
-
+          
       - name: Setup .env
+        run: echo Setting up enviromental variables 
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL}}
           ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
