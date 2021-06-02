@@ -1,14 +1,25 @@
-name: PR and push CI
+name: pull-request and push
 
-on: [pull-request]
+on: 
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
-  build:
-    name: Build
+  deploy:
+    name: deploy
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Switch to source code
+        uses: actions/checkout@v2
+        
+      - name: Switch to current node version
+        uses: actions/setup-node@v1
+        with:
+          node-version: 15
+
       - name: Install NPM packages
         run: npm install
 
@@ -19,4 +30,4 @@ jobs:
         run: npm run test
 
       - name: Run production build
-        run: npm run build
+        run: npm run build:prod
