@@ -4,9 +4,9 @@
    "description": "",
    "main": "index.js",
    "scripts": {
-      "build": "rimraf ./dist, tsc --build",
+      "build:dev": "rimraf ./dist, tsc --build",
       "build:prod": "tsc --build",
-      "start": "ts-node src/index.ts",
+      "start:dev": "ts-node src/index.ts",
       "start:prod": "node ./dist/index.js",
       "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
       "eslint": "npx eslint './src/**'",
