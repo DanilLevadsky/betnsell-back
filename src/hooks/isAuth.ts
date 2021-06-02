@@ -1,4 +1,4 @@
-import {FastifyReply} from "fastify";
+import {FastifyReply, FastifyRequest} from "fastify";
 import jwt from "jsonwebtoken";
 import {RequestError} from "../utils/error";
 import {ErrorTypes} from "../constants/errorConstants";

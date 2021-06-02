@@ -1,13 +1,12 @@
-import { PrismaClient } from "@prisma/client";
-import { hashSync } from "bcryptjs";
-import { config } from "dotenv";
+import {PrismaClient} from "@prisma/client";
+import {hashSync} from "bcryptjs";
+import {config} from "dotenv";
 import {deleteProductsByUser} from "../products/queries";
 const prisma = new PrismaClient();
 
 config();
 
 const createUser = async function(data: any): Promise<any> {
-
 	const user = await prisma.user.create({
 		data: {
 			username: data.username,
@@ -27,21 +26,19 @@ const createUser = async function(data: any): Promise<any> {
 };
 
 const getUserByUsername = async function(username: string) {
-	const user = await prisma.user.findUnique(
+	return await prisma.user.findUnique(
 		{ where: {
 			username: username,
 		},
 		});
-	return user;
 };
 
 const getUserByEmail = async function(email: string) {
-	const user = await prisma.user.findUnique(
+	return await prisma.user.findUnique(
 		{ where: {
 			email: email,
 		},
 		});
-	return user;
 };
 
 const ifUserExists = async function(email: string, username: string) {
