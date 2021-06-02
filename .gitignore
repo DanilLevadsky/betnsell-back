@@ -1,6 +1,10 @@
-dist/
-node_modules/
-config/
 .idea/
+.vscode/
+node_modules/
+build/
+dist/
 .DS_Store
-.husky
+config/
+prisma/migrations
+./.nyc_output
+./coverage
