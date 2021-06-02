@@ -1,4 +1,8 @@
-import {FastifyInstance, FastifyPluginCallback} from "fastify";
+import {
+	FastifyInstance,
+	FastifyPluginCallback,
+	FastifyReply,
+} from "fastify";
 import isAuth from "../../hooks/isAuth";
 import {
 	createProduct,
@@ -18,11 +22,12 @@ import {
 import {getAuctionByProductId} from "../auctions/queries";
 import {RequestError} from "../../utils/error";
 import {ErrorTypes} from "../../constants/errorConstants";
+import {Product, Auction} from ".prisma/client";
 
 const products: FastifyPluginCallback = async function(fastify: FastifyInstance) {
-	fastify.put("/create", { schema: postProductSchema, preValidation: isAuth }, async (req: any, res: any) => {
-		const productInfo = {...req.body, userId: req.requestContext.get("userId").id};
-		const product = await createProduct(productInfo);
+	fastify.put("/create", {schema: postProductSchema, preValidation: isAuth}, async (req: any, res: FastifyReply) => {
+		const productInfo: object = {...req.body, userId: req.requestContext.get("userId").id};
+		const product: Product | null = await createProduct(productInfo);
 		if (!product) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.invalidProductDataError, "Cannot create product with such data"),
@@ -31,14 +36,14 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 		return res.status(201).send(product);
 	});
 
-	fastify.get("/:id", { schema: generalProductSchema }, async (req: any, res: any) => {
-		const product = await getProductById(parseInt(req.params.id));
+	fastify.get("/:id", { schema: generalProductSchema }, async (req: any, res: FastifyReply) => {
+		const product: Product | null = await getProductById(parseInt(req.params.id));
 		if (!product) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.productNotFoundError, "There are no products with such id"),
 			);
 		}
-		const auction = await getAuctionByProductId(product.id);
+		const auction: Auction | null = await getAuctionByProductId(product.id);
 		return res.status(200).send({
 			id: product.id,
 			title: product.title,
@@ -50,11 +55,16 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 	});
 
 	fastify.patch("/:id/title", { schema: updateTitleSchema, preValidation: isAuth }, async(req: any, res: any) => {
-		const userId = req.requestContext.get("userId").id;
-		const productId = parseInt(req.params.id);
-		const product = await getProductById(productId);
-		const auction = await getAuctionByProductId(productId);
-		if (product!.userId !== userId) {
+		const userId: number = req.requestContext.get("userId").id;
+		const productId: number = parseInt(req.params.id);
+		const product: Product | null = await getProductById(productId);
+		const auction: Auction | null = await getAuctionByProductId(productId);
+		if (!product) {
+			return res.status(400).send(
+				new RequestError(400, ErrorTypes.productNotFoundError, "Product not found"),
+			);
+		}
+		if (product.userId !== userId) {
 			return res.status(403).send(
 				new RequestError(403, ErrorTypes.forbiddenAccessError, "You cannot update this product"),
 			);
@@ -63,8 +73,8 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 			return res.status(403).send(
 				new RequestError(403, ErrorTypes.forbiddenAccessError, "You cannot update this product"),
 			);
-		};
-		const updatedProduct = await updateTitle(productId, req.body.title);
+		}
+		const updatedProduct: Product | null = await updateTitle(productId, req.body.title);
 		if (!updatedProduct) {
 			return res.status(400).send(new RequestError(400, ErrorTypes.invalidUpdateInfoError, "Cannot update product"),
 			);
@@ -72,16 +82,21 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 		return res.status(200).send(updatedProduct);
 	});
 
-	fastify.patch("/:id/description", { schema: updateDescriptionSchema, preValidation: isAuth }, async(req: any, res: any) => {
-		const userId = req.requestContext.get("userId").id;
-		const productId = parseInt(req.params.id);
-		const product = await getProductById(productId);
-		if (product!.userId !== userId) {
+	fastify.patch("/:id/description", { schema: updateDescriptionSchema, preValidation: isAuth }, async(req: any, res: FastifyReply) => {
+		const userId: number = req.requestContext.get("userId").id;
+		const productId: number = parseInt(req.params.id);
+		const product: Product | null = await getProductById(productId);
+		if (!product) {
+			return res.status(400).send(
+				new RequestError(400, ErrorTypes.productNotFoundError, "Product not found"),
+			);
+		}
+		if (product.userId !== userId) {
 			return res.status(403).send(
 				new RequestError(403, ErrorTypes.forbiddenAccessError, "You cannot update this product"),
 			);
 		}
-		const updatedProduct = await updateDescription(productId, req.body.description);
+		const updatedProduct: Product | null = await updateDescription(productId, req.body.description);
 		if (!updatedProduct) {
 			return res.status(400).send(new RequestError(400, ErrorTypes.invalidUpdateInfoError, "Cannot update product"),
 			);
@@ -89,11 +104,16 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 		return res.status(200).send(updatedProduct);
 	});
 
-	fastify.patch("/:id/photo", { schema: updatePhotoSchema, preValidation: isAuth }, async(req: any, res: any) => {
+	fastify.patch("/:id/photo", { schema: updatePhotoSchema, preValidation: isAuth }, async(req: any, res: FastifyReply) => {
 		const userId = req.requestContext.get("userId").id;
 		const productId = parseInt(req.params.id);
-		const product = await getProductById(productId);
-		if (product!.userId !== userId) {
+		const product: Product | null = await getProductById(productId);
+		if (!product) {
+			return res.status(400).send(
+				new RequestError(400, ErrorTypes.productNotFoundError, "Product not found"),
+			);
+		}
+		if (product.userId !== userId) {
 			return res.status(403).send(
 				new RequestError(403, ErrorTypes.forbiddenAccessError, "You cannot update this product"),
 			);
@@ -106,10 +126,10 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 		return res.status(200).send(updatedProduct);
 	});
 
-	fastify.delete("/:id", {preValidation: isAuth}, async (req: any, res: any) => {
-		const userId = req.requestContext.get("userId").id;
-		const productId = parseInt(req.params.id);
-		const product = await getProductById(productId);
+	fastify.delete("/:id", {preValidation: isAuth}, async (req: any, res: FastifyReply) => {
+		const userId: number = req.requestContext.get("userId").id;
+		const productId: number = parseInt(req.params.id);
+		const product: Product | null = await getProductById(productId);
 		if (!product) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.productNotFoundError, "Product not found"),
@@ -120,7 +140,7 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 				new RequestError(403, ErrorTypes.forbiddenAccessError, "You cannot delete this product"),
 			);
 		}
-		const deletedProduct = await deleteProductById(productId);
+		const deletedProduct: Product | null = await deleteProductById(productId);
 		if (!deletedProduct) {
 			return res.status(403).send(
 				new RequestError(403, ErrorTypes.forbiddenAccessError, "You cannot delete product"),
@@ -130,4 +150,4 @@ const products: FastifyPluginCallback = async function(fastify: FastifyInstance)
 	});
 };
 
-export { products };
+export {products};

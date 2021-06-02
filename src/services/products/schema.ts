@@ -31,7 +31,7 @@ const postProductSchema: FastifySchema = {
 		type: "object",
 		required: ["title", "description", "photo"],
 		properties: {
-			title: { type: "string" },
+			title: { type: "string", minLength: 5 },
 			description: { type: ["string", "null"] },
 			photo: { type: ["string", "null"] },
 		},
@@ -55,7 +55,7 @@ const updateTitleSchema = {
 		type: "object",
 		required: ["title"],
 		properties: {
-			title: { type: "string" },
+			title: { type: "string", minLength: 5 },
 		},
 	},
 	...getProductSchema,

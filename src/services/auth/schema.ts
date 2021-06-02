@@ -1,6 +1,6 @@
 import { FastifySchema } from "fastify";
 
-const loginByEmail: FastifySchema = {
+const loginByEmailSchema: FastifySchema = {
 	body: {
 		type: "object",
 		required: ["email", "password"],
@@ -26,7 +26,7 @@ const loginByEmail: FastifySchema = {
 	},
 };
 
-const loginByUsername: FastifySchema = {
+const loginByUsernameSchema: FastifySchema = {
 	body: {
 		type: "object",
 		required: ["username", "password"],
@@ -51,7 +51,7 @@ const loginByUsername: FastifySchema = {
 	},
 };
 
-const loginGet: FastifySchema = {
+const loginGetSchema: FastifySchema = {
 	response: {
 		"2xx": {
 			id: { type: "number" },
@@ -67,7 +67,7 @@ const loginGet: FastifySchema = {
 	},
 };
 
-const signUpPost: FastifySchema = {
+const signUpPostSchema: FastifySchema = {
 	body: {
 		type: "object",
 		required: ["username", "password", "email"],
@@ -90,4 +90,4 @@ const signUpPost: FastifySchema = {
 };
 
 
-export { loginGet, signUpPost, loginByEmail, loginByUsername };
+export { loginGetSchema, signUpPostSchema, loginByEmailSchema, loginByUsernameSchema };

@@ -92,7 +92,7 @@ const deleteProductById = async function(id: number) {
 };
 
 const deleteProductsByUser = async function(userId: number) {
-	const deletedAuction = await deleteAuctionsByUser(userId);
+	await deleteAuctionsByUser(userId);
 	return await prisma.product.deleteMany({
 		where: {
 			userId: userId,
