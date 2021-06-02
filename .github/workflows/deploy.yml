@@ -36,7 +36,7 @@ jobs:
         run: npm run test
 
       - name: Run production build
-        run: npm run build
+        run: npm run build:prod
 
       - name: Connect to server via SSH and use docker.
         uses: appleboy/ssh-action@master
