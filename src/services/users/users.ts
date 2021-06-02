@@ -9,9 +9,11 @@ import {
 	updateProfilePic,
 	updateUsername,
 } from "./queries";
-import {FastifyInstance, FastifyPluginCallback} from "fastify";
+import {FastifyInstance, FastifyPluginCallback, FastifyReply} from "fastify";
 import {
-	generalUserSchema, getUserAuctionsSchema, getUserProductsSchema,
+	generalUserSchema,
+	getUserAuctionsSchema,
+	getUserProductsSchema,
 	shortUserSchema,
 	updateBalanceSchema,
 	updateEmailSchema,
@@ -24,7 +26,8 @@ import {
 import {RequestError} from "../../utils/error";
 import {ErrorTypes} from "../../constants/errorConstants";
 import {
-	deleteProductsByUser, getAllUsersProducts, getProductById,
+	getAllUsersProducts,
+	getProductById,
 	getProductPagesCount,
 	getProductsByUser,
 } from "../products/queries";
@@ -35,11 +38,11 @@ import {
 } from "../auctions/queries";
 import isAuth from "../../hooks/isAuth";
 import {getTickets} from "../tickets/queries";
-
+import {User, Product, Auction} from ".prisma/client";
 
 const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
-	fastify.get("/:id", { schema: shortUserSchema }, async (req: any, res: any ) => {
-		const user = await getUserById(parseInt(req.params.id));
+	fastify.get("/:id", { schema: shortUserSchema }, async (req: any, res: FastifyReply ) => {
+		const user: User | null = await getUserById(parseInt(req.params.id));
 		if (!user) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "User with such id not found"),
@@ -48,21 +51,21 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 		return res.status(200).send(user);
 	});
 
-	fastify.get("/", {schema: generalUserSchema, preValidation: isAuth}, async (req:any, res:any) => {
-		const userId = req.requestContext.get("userId").id;
-		const user = await getUserById(userId);
+	fastify.get("/", {schema: generalUserSchema, preValidation: isAuth}, async (req: any, res: FastifyReply) => {
+		const userId: number = req.requestContext.get("userId").id;
+		const user: User | null = await getUserById(userId);
 		if (!user) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
 			);
 		}
-		const products = await getAllUsersProducts(user.id);
+		const products: Array<Product> = await getAllUsersProducts(user.id);
 		if (!products) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.productNotFoundError, "Products not found"),
 			);
 		}
-		const auctions = await getAllUsersAuctions(user.id);
+		const auctions: Array<Auction> = await getAllUsersAuctions(user.id);
 		if (!auctions) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.auctionNotFoundError, "Auctions not found"),
@@ -82,26 +85,26 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 		});
 	});
 
-	fastify.patch("/update/username", {schema: updateUsernameSchema, preValidation: isAuth}, async (req: any, res: any) => {
-		const userId = req.requestContext.get("userId").id;
-		const user = await getUserById(userId);
+	fastify.patch("/update/username", {schema: updateUsernameSchema, preValidation: isAuth}, async (req: any, res: FastifyReply) => {
+		const userId: number = req.requestContext.get("userId").id;
+		const user: User | null = await getUserById(userId);
 		if (!user) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
 			);
 		}
-		const updated = await updateUsername(user.id, req.body.username);
+		const updated: User | null = await updateUsername(user.id, req.body.username);
 		if (!updated) {
-			res.staus(400).send(
+			res.status(400).send(
 				new RequestError(400, ErrorTypes.invalidUpdateInfoError, "Cannot update user with this data"),
 			);
 		}
 		return res.status(200).send(updated);
 	});
 
-	fastify.patch("/update/email", {schema: updateEmailSchema, preValidation: isAuth}, async (req: any, res: any) => {
-	 const userId = req.requestContext.get("userId").id;
-	 const user = await getUserById(userId);
+	fastify.patch("/update/email", {schema: updateEmailSchema, preValidation: isAuth}, async (req: any, res: FastifyReply) => {
+	 const userId: number = req.requestContext.get("userId").id;
+	 const user: User | null = await getUserById(userId);
 	 if (!user) {
 		 return res.status(400).send(
 			 new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
@@ -109,7 +112,7 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 	 }
 	 const updated = await updateEmail(user.id, req.body.email);
 	 if (!updated) {
-		 res.staus(400).send(
+		 res.status(400).send(
 			 new RequestError(400, ErrorTypes.invalidUpdateInfoError, "Cannot update user with this data"),
 		 );
 	 }
@@ -117,103 +120,103 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
  	});
 
 
-	fastify.patch("/update/password", {schema: updatePasswordSchema, preValidation: isAuth}, async (req: any, res: any) => {
-		const userId = req.requestContext.get("userId").id;
-		const user = await getUserById(userId);
+	fastify.patch("/update/password", {schema: updatePasswordSchema, preValidation: isAuth}, async (req: any, res: FastifyReply) => {
+		const userId: number = req.requestContext.get("userId").id;
+		const user: User | null = await getUserById(userId);
 		if (!user) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
 			);
 		}
-		const updated = await updatePassword(user.id, req.body.password);
+		const updated: User | null = await updatePassword(user.id, req.body.password);
 		if (!updated) {
-			res.staus(400).send(
+			res.status(400).send(
 				new RequestError(400, ErrorTypes.invalidUpdateInfoError, "Cannot update user with this data"),
 			);
 		}
 		return res.status(200).send(updated);
 	});
 
-	fastify.patch("/update/name", {schema: updateNameSchema, preValidation: isAuth}, async (req: any, res: any) => {
-		const userId = req.requestContext.get("userId").id;
-		const user = await getUserById(userId);
+	fastify.patch("/update/name", {schema: updateNameSchema, preValidation: isAuth}, async (req: any, res: FastifyReply) => {
+		const userId: number = req.requestContext.get("userId").id;
+		const user: User | null = await getUserById(userId);
 		if (!user) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
 			);
 		}
-		const updated = await updateName(user.id, req.body.name);
+		const updated: User | null = await updateName(user.id, req.body.name);
 		if (!updated) {
-			res.staus(400).send(
+			res.status(400).send(
 				new RequestError(400, ErrorTypes.invalidUpdateInfoError, "Cannot update user with this data"),
 			);
 		}
 		return res.status(200).send(updated);
 	});
 
-	fastify.patch("/update/mobile", {schema: updateMobileSchema, preValidation: isAuth}, async (req: any, res: any) => {
-		const userId = req.requestContext.get("userId").id;
-		const user = await getUserById(userId);
+	fastify.patch("/update/mobile", {schema: updateMobileSchema, preValidation: isAuth}, async (req: any, res: FastifyReply) => {
+		const userId: number = req.requestContext.get("userId").id;
+		const user: User | null = await getUserById(userId);
 		if (!user) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
 			);
 		}
-		const updated = await updateMobile(user.id, req.body.mobile);
+		const updated: User | null = await updateMobile(user.id, req.body.mobile);
 		if (!updated) {
-			res.staus(400).send(
+			res.status(400).send(
 				new RequestError(400, ErrorTypes.invalidUpdateInfoError, "Cannot update user with this data"),
 			);
 		}
 		return res.status(200).send(updated);
 	});
 
-	fastify.patch("/update/profilePic", {schema: updateProfilePicSchema, preValidation: isAuth}, async (req: any, res: any) => {
-		const userId = req.requestContext.get("userId").id;
-		const user = await getUserById(userId);
+	fastify.patch("/update/profilePic", {schema: updateProfilePicSchema, preValidation: isAuth}, async (req: any, res: FastifyReply) => {
+		const userId: number = req.requestContext.get("userId").id;
+		const user: User | null = await getUserById(userId);
 		if (!user) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
 			);
 		}
-		const updated = await updateProfilePic(user.id, req.body.profilePic);
+		const updated: User | null = await updateProfilePic(user.id, req.body.profilePic);
 		if (!updated) {
-			res.staus(400).send(
+			res.status(400).send(
 				new RequestError(400, ErrorTypes.invalidUpdateInfoError, "Cannot update user with this data"),
 			);
 		}
 		return res.status(200).send(updated);
 	});
 
-	fastify.patch("/update/balance", {schema: updateBalanceSchema, preValidation: isAuth}, async (req: any, res: any) => {
-		const userId = req.requestContext.get("userId").id;
-		const user = await getUserById(userId);
+	fastify.patch("/update/balance", {schema: updateBalanceSchema, preValidation: isAuth}, async (req: any, res: FastifyReply) => {
+		const userId: number = req.requestContext.get("userId").id;
+		const user: User | null = await getUserById(userId);
 		if (!user) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
 			);
 		}
-		const updated = await addFunds(user.id, req.body.sum);
+		const updated: User | null = await addFunds(user.id, req.body.sum);
 		if (!updated) {
-			res.staus(400).send(
+			res.status(400).send(
 				new RequestError(400, ErrorTypes.invalidUpdateInfoError, "Cannot update user with this data"),
 			);
 		}
 		return res.status(200).send(updated);
 	});
 
-	fastify.get("/:userId/products", {schema: getUserProductsSchema}, async (req:any, res:any) => {
-		const perPage = parseInt(req.query.perPage) || 10;
-		const page = parseInt(req.query.page) || 1;
-
-		const user = await getUserById(parseInt(req.params.userId));
+	fastify.get("/:userId/products", {schema: getUserProductsSchema}, async (req: any, res: FastifyReply) => {
+		const perPage: number = parseInt(req.query.perPage) || 10;
+		const page: number = parseInt(req.query.page) || 1;
+		const userId: number = parseInt(req.params.userId);
+		const user: User | null = await getUserById(userId);
 		if (!user) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
 			);
 		}
-		const totalPages = await getProductPagesCount(perPage, user.id);
-		const products = await getProductsByUser(user.id, perPage, page);
+		const totalPages: number = await getProductPagesCount(perPage, userId);
+		const products: Array<Product> = await getProductsByUser(userId, perPage, page);
 		if (!products) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.productNotFoundError, "Products not found"),
@@ -227,39 +230,40 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 		});
 	});
 
-	fastify.get("/:userId/auctions", {schema: getUserAuctionsSchema}, async (req:any, res:any)=> {
-		const perPage = parseInt(req.query.perPage) || 10;
-		const page = parseInt(req.query.page) || 1;
-		const userId = parseInt(req.params.userId);
-		const user = await getUserById(userId);
+	fastify.get("/:userId/auctions", {schema: getUserAuctionsSchema}, async (req: any, res: FastifyReply)=> {
+		const perPage: number = parseInt(req.query.perPage) || 10;
+		const page: number = parseInt(req.query.page) || 1;
+		const userId: number = parseInt(req.params.userId);
+		const user: User | null = await getUserById(userId);
 		if (!user) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "User not found"),
 			);
 		}
-		const totalPages = await getPagesCountByUser(perPage, userId);
-		const auctions: any = await getAuctionsByUser(userId, perPage, page);
+		const totalPages: number = await getPagesCountByUser(perPage, userId);
+		const auctions: Array<Auction> = await getAuctionsByUser(userId, perPage, page);
 		if (!auctions) {
 			new RequestError(400, ErrorTypes.auctionNotFoundError, "Auctions not found");
 		}
+		const data: Array<any> = [];
 		for (let i = 0; i < auctions.length; i++) {
-			auctions[i] = {
+			data.push({
 				...auctions[i],
 				product: await getProductById(auctions[i].productId),
 				tickets: await getTickets(auctions[i].id),
-			};
+			});
 		}
 		return res.status(200).send({
 			pageSize: perPage,
 			currentPage: page,
 			totalPages: totalPages,
-			content: auctions,
+			content: data,
 		});
 	});
 
-	fastify.delete("/delete", {preValidation: isAuth}, async (req: any, res: any) => {
-		const userId = req.requestContext.get("userId").id;
-		const deletedUser = await deleteUser(userId);
+	fastify.delete("/delete", {preValidation: isAuth}, async (req: any, res: FastifyReply) => {
+		const userId: number = req.requestContext.get("userId").id;
+		const deletedUser: User | null = await deleteUser(userId);
 		if (!deletedUser) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.userNotFoundError, "Cannot delete user"),
@@ -270,4 +274,4 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 
 };
 
-export { users };
+export {users};

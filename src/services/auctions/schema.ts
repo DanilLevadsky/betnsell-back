@@ -35,8 +35,8 @@ const postAuctionSchema: FastifySchema = {
 			pricePerTicket: {type: "number"},
 			totalTickets: {type: "number"},
 		},
-		...shortAuctionSchema,
 	},
+	...shortAuctionSchema,
 };
 
 const getAuctionSchema = {
