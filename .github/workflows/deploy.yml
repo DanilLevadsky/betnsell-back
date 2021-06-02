@@ -29,12 +29,6 @@ jobs:
       - name: Install NPM packages
         run: npm install
 
-      - name: Run eslint check
-        run: npm run eslint
-
-      - name: run tests
-        run: npm run test
-
       - name: Run production build
         run: npm run build:prod
 
