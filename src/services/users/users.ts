@@ -32,7 +32,7 @@ import {
 	getProductsByUser,
 } from "../products/queries";
 import {
-	getAllUsersAuctions,
+	getAllUsersAuctions, getAuctionByProductId,
 	getAuctionsByUser,
 	getPagesCountByUser,
 } from "../auctions/queries";
@@ -217,6 +217,13 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 		}
 		const totalPages: number = await getProductPagesCount(perPage, userId);
 		const products: Array<Product> = await getProductsByUser(userId, perPage, page);
+		const data = [];
+		for (const product of products) {
+			data.push({
+				...product,
+				auction: await getAuctionByProductId(product.id),
+			});
+		}
 		if (!products) {
 			return res.status(400).send(
 				new RequestError(400, ErrorTypes.productNotFoundError, "Products not found"),
@@ -226,7 +233,7 @@ const users: FastifyPluginCallback = async function(fastify: FastifyInstance) {
 			pageSize: perPage,
 			products: products,
 			totalPages: totalPages,
-			content: products,
+			content: data,
 		});
 	});
 
