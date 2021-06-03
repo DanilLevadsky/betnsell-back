@@ -136,6 +136,13 @@ const getUserProductsSchema: FastifySchema = {
 						title: {type: "string"},
 						description: {type: ["string", "null"]},
 						photo: {type: ["string", "null"]},
+						isBusy: {type: "boolean"},
+						auction: {
+							type: ["object", "null"],
+							properties: {
+								id: {type: "number"},
+							},
+						},
 					},
 				},
 			},

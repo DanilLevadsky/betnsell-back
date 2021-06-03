@@ -41,10 +41,11 @@ const auctions: FastifyPluginCallback = async function (
 				new RequestError(400, ErrorTypes.invalidAuctionDataError, "Cannot create auction"),
 			);
 		}
+		const tickets = await getTickets(auction.id);
 		return res.status(201).send({
 			...auction,
 			product: await getProductById(auction.productId),
-			tickets: await getTickets(auction.id),
+			tickets: tickets,
 		});
 	});
 
@@ -62,7 +63,13 @@ const auctions: FastifyPluginCallback = async function (
 			);
 		}
 		const tickets: Array<Ticket> = await getTickets(auction.id);
-		return res.status(200).send({...auction, product: product, tickets: tickets});
+		const users: Array<number> = [];
+		tickets.forEach(e => {
+			if (e.userId && !users.includes(e.userId)) {
+				users.push(e.userId);
+			}
+		});
+		return res.status(200).send({...auction, product: product, tickets: tickets, users: users});
 	});
 
 
@@ -101,10 +108,8 @@ const auctions: FastifyPluginCallback = async function (
 		for (let i = 0; i < auctions.length; i++) {
 			data.content.push({
 				...auctions[i],
-				products: await getProductById(auctions[i].productId),
-				tickets: await getTickets(auctions[i].id),
-			},
-			);
+				product: await getProductById(auctions[i].productId),
+			});
 		}
 		return res.status(200).send(data);
 	}); 
