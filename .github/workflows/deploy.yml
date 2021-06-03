@@ -30,7 +30,7 @@ jobs:
         with:
           host: ${{ secrets.AWS_HOST }}
           username: ${{ secrets.AWS_USER }}
-          key: ${{ secrets.SSH_RSA_KEY }}
+          key: ${{ secrets.AWS_RSA_KEY }}
           script: sh home/ubuntu/betnsell/bet-n-sell-back/scripts/RunDeploy.sh
           
       - name: Setup .env
