@@ -1,6 +1,5 @@
 import tap from "tap";
 import { server } from "../server";
-import { deleteUser } from "../services/users/queries";
 
 const endUseCaseTest = async() => {
 	await server.close();

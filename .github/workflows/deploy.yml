@@ -1,0 +1,42 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout to source code
+        uses: actions/checkout@v2
+
+      - name: Switch to current node version
+        uses: actions/setup-node@v2
+        with:
+         node-version: 15
+
+      - name: Install NPM packages
+        run: npm install
+
+      - name: Run production build
+        run: npm run build:prod
+
+      - name: Connect to server via SSH and use docker.
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.SSH_RSA_KEY }}
+          script: sh ~/betnsell/bet-n-sell-back/scripts/RunDeploy.sh
+          
+      - name: Setup .env
+        run: echo Setting up enviromental variables 
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL}}
+          ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+          HASH_SALT: ${{ secrets.HASH_SALT }}
+
