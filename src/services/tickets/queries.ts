@@ -87,7 +87,6 @@ const getTickets = async function(auctionId: number) {
 		},
 		orderBy: {
 			userId: "asc",
-			ticketNumber: "asc",
 		},
 	});
 };
