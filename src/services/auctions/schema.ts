@@ -73,6 +73,12 @@ const getAuctionSchema = {
 						},
 					},
 				},
+				users: {
+					type: "array",
+					items: {
+						type: "number",
+					},
+				},
 			},
 		},
 	},
