@@ -31,7 +31,7 @@ jobs:
           host: ${{ secrets.AWS_HOST }}
           username: ${{ secrets.AWS_USER }}
           key: ${{ secrets.SSH_RSA_KEY }}
-          script: sh home/ubuntu/betnsell/bet-n-sell-back/scripts/RunDeploy.sh
+          script: sh ~/betnsell/bet-n-sell-back/scripts/RunDeploy.sh
           
       - name: Setup .env
         run: echo Setting up enviromental variables 
